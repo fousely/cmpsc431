@@ -1,4 +1,1 @@
-# cmpsc431
-
-
-#Rafi
+Pro-Tip: If you have Windows 10, you can install git in Bash for Windows and it works pretty well. Using it now :^)
