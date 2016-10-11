@@ -5,7 +5,8 @@
 #-----------------Item_desc table should this table reference items or should items reference this?
 #-----------------rating table -> ratee should be referencing an account not a user?
 #-----------------Message table -> sender and reciver should be referencing an account not a user?
-
+#-----------------hasaddress -> constraints need to be looked at
+#-----------------Transactions -> no constraints have been added
 
 drop database if exists sanchez;
 create database sanchez;
@@ -49,7 +50,7 @@ create table HasPhoneNumber(
 	AID varchar(20),
     Pnumber integer(11),
     primary key(AID),
-    foreign key(AID) references Accounts(AID) );
+    foreign key(AID) references Accounts(AID) on delete cascade );
     
 create table Addresses(
 	AddressID int auto_increment,
@@ -58,12 +59,12 @@ create table Addresses(
     State Char(2),
     zip int(5),
     primary key(AddressID));
-    
+# not sure if constraint is correct 
 create table HasAddress(
-	AID varchar(20),
+	AID varchar(20) not null,
 	AddressID int,
 	primary key(AID,AddressID),
-	foreign key(AID) references accounts(AID),
+	foreign key(AID) references accounts(AID) on delete cascade,
 	foreign key(AddressID) references Addresses(AddressID));
     
 #---------might want to break experation up into exp_month and exp_year
@@ -119,7 +120,7 @@ create table Item_Desc(
 );
 
 create table HasTag(
-	Pid int,
+	Pid int not null,
     tag varchar(10),
     primary key(pid,tag),
     foreign key(pid) references Items(PID)
@@ -188,7 +189,7 @@ create table Bid(
 );
 
 create table IsIn(
-	PID int,
+	PID int not null,
     catagory varchar(20),
     primary key(PID, catagory),
     foreign key(catagory) references categories(catagory)
