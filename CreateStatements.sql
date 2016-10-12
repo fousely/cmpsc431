@@ -1,4 +1,5 @@
-#sanchez create schema
+#Sanchez CreateStatements.sql
+
 DROP DATABASE IF EXISTS sanchez; CREATE DATABASE sanchez; USE sanchez; CREATE TABLE Accounts ( 
 aid VARCHAR(20),
     full_name VARCHAR(20),
