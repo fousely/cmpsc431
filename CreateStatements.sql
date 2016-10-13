@@ -98,7 +98,6 @@ CREATE TABLE ItemDesc(
 CREATE TABLE Items(
     pid INTEGER AUTO_INCREMENT,
     location INTEGER,
-    bid BOOLEAN, 
     upc VARCHAR(20), 
     list_price REAL, 
     auction_price REAL, 
