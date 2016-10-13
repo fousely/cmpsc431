@@ -110,7 +110,7 @@ CREATE TABLE Items(
     included_in INTEGER, 
     PRIMARY KEY (pid),
     FOREIGN KEY (included_in) REFERENCES Transactions(tid) ON DELETE CASCADE,
-    FOREIGN KEY (upc) REFERENCES ItemDesc(upc) ON DELETE NO ACTION
+    FOREIGN KEY (upc) REFERENCES ItemDesc(upc) ON DELETE NO ACTION,
     FOREIGN KEY (location) REFERENCES Addresses(address_id) ON DELETE NO ACTION );
     
 CREATE TABLE HasTag( 
