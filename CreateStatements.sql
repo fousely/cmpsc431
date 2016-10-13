@@ -49,7 +49,7 @@ CREATE TABLE HasAddress(
     address_id INTEGER, 
     PRIMARY KEY (aid, address_id),
     FOREIGN KEY (aid) REFERENCES Accounts(aid) ON DELETE CASCADE, 
-    FOREIGN KEY (address_id) REFERENCES Addresses(address_id) ON DELETE CASCADE );
+    FOREIGN KEY (address_id) REFERENCES Addresses(address_id) ON DELETE NO ACTION );
     
 # Kept date so it's easier to compare to current date
 CREATE TABLE CreditCards (
