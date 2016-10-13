@@ -5,7 +5,7 @@ CREATE DATABASE sanchez;
 USE sanchez;
 
 CREATE TABLE Accounts ( 
-aid VARCHAR(20),
+    aid VARCHAR(20),
     full_name VARCHAR(20),
     pass VARCHAR(20),
     PRIMARY KEY (aid) );
@@ -117,16 +117,16 @@ CREATE TABLE HasTag(
     FOREIGN KEY (pid) REFERENCES Items(pid) ON DELETE CASCADE );
     
 CREATE TABLE Categories( 
-    catagory VARCHAR(20),
+    category VARCHAR(20),
     description VARCHAR(100),
-    PRIMARY KEY (catagory) );
+    PRIMARY KEY (category) );
 
     CREATE TABLE HasSub(
     parent VARCHAR(20),
     child VARCHAR(20),
     PRIMARY KEY (parent, child),
-    FOREIGN KEY (parent) REFERENCES Categories(catagory) ON DELETE NO ACTION,
-    FOREIGN KEY (child) REFERENCES Categories(catagory) ON DELETE CASCADE ); 
+    FOREIGN KEY (parent) REFERENCES Categories(category) ON DELETE NO ACTION,
+    FOREIGN KEY (child) REFERENCES Categories(category) ON DELETE CASCADE ); 
 
 CREATE TABLE Rating( 
     rater VARCHAR(20),
@@ -173,9 +173,9 @@ CREATE TABLE Bid(
    
 CREATE TABLE IsIn( 
     pid INTEGER,
-    catagory VARCHAR(20),
-    PRIMARY KEY (pid, catagory),
-    FOREIGN KEY (catagory) REFERENCES Categories(catagory) ON DELETE NO ACTION );
+    category VARCHAR(20),
+    PRIMARY KEY (pid, category),
+    FOREIGN KEY (category) REFERENCES Categories(category) ON DELETE NO ACTION );
     
 CREATE TABLE RateItem( 
     rater VARCHAR(20),
