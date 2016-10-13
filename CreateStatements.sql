@@ -10,33 +10,36 @@ CREATE TABLE Accounts (
     pass VARCHAR(20),
     PRIMARY KEY (aid) );
     
-CREATE TABLE Emails( email VARCHAR(20),
+CREATE TABLE Emails(
+    email VARCHAR(20),
     aid VARCHAR(20),
     PRIMARY KEY (email),
     FOREIGN KEY (aid) REFERENCES Accounts(aid) ON DELETE CASCADE );
     
 #---------DATE accepts yyyy-mm-dd
-CREATE TABLE Users( uid VARCHAR(20),
+CREATE TABLE Users( 
+    uid VARCHAR(20),
     gender CHAR(1),
     dob DATE,
     PRIMARY KEY (uid),
     FOREIGN KEY (uid) REFERENCES Accounts(aid) ON DELETE CASCADE );
     
 # poc will be a phone number
-CREATE TABLE Suppliers( sid VARCHAR(20),
+CREATE TABLE Suppliers(
+    sid VARCHAR(20),
     revenue REAL,
     category VARCHAR(20),
     poc VARCHAR(20),
     PRIMARY KEY (sid),
     FOREIGN KEY (sid) REFERENCES Accounts(aid) ON DELETE CASCADE );
     
-CREATE TABLE HasPhoneNumber( aid VARCHAR(20),
+CREATE TABLE HasPhoneNumber(
+    aid VARCHAR(20),
     phone_number VARCHAR(20),
     PRIMARY KEY (aid),
     FOREIGN KEY (aid) REFERENCES Accounts(aid) ON DELETE CASCADE );
     
-    
-CREATE TABLE Addresses (
+CREATE TABLE Addresses(
     address_id INTEGER AUTO_INCREMENT,
     street VARCHAR(100),
     city VARCHAR(20),
@@ -52,7 +55,7 @@ CREATE TABLE HasAddress(
     FOREIGN KEY (address_id) REFERENCES Addresses(address_id) ON DELETE NO ACTION );
     
 # Kept date so it's easier to compare to current date
-CREATE TABLE CreditCards (
+CREATE TABLE CreditCards(
     card_number INTEGER(16),
     name_on_card VARCHAR(20),
     expiration DATE,
@@ -61,7 +64,7 @@ CREATE TABLE CreditCards (
     PRIMARY KEY (card_number),
     FOREIGN KEY (bills_to) REFERENCES Addresses(address_id) ON DELETE NO ACTION );
         
-CREATE TABLE OwnsCC (
+CREATE TABLE OwnsCC(
     uid VARCHAR(20),
     card_number INTEGER(16),
     PRIMARY KEY (uid, card_number),
@@ -71,7 +74,7 @@ CREATE TABLE OwnsCC (
 # Category will denote bid vs sale 
 # We'll have to go through every so often and delete 
 # transactions with all null FKs
-CREATE TABLE Transactions (
+CREATE TABLE Transactions(
     tid INTEGER AUTO_INCREMENT,
     category CHAR(1),
     tracking_number VARCHAR(35),
@@ -121,7 +124,7 @@ CREATE TABLE Categories(
     description VARCHAR(100),
     PRIMARY KEY (category) );
 
-    CREATE TABLE HasSub(
+CREATE TABLE HasSub(
     parent VARCHAR(20),
     child VARCHAR(20),
     PRIMARY KEY (parent, child),
