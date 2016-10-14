@@ -1,1 +1,23 @@
-#Currently having a problem doing it this way. In the meantime loading it in CreateStatements.sql
+LOAD DATA LOCAL INFILE './FakeData/AccountsData' INTO TABLE Accounts;
+LOAD DATA LOCAL INFILE './FakeData/AddressesData' INTO TABLE Addresses;
+LOAD DATA LOCAL INFILE './FakeData/BidData' INTO TABLE Bid;
+LOAD DATA LOCAL INFILE './FakeData/CategoriesData' INTO TABLE Categories;
+LOAD DATA LOCAL INFILE './FakeData/CreditCardsData' INTO TABLE CreditCards;
+LOAD DATA LOCAL INFILE './FakeData/EmailsData' INTO TABLE Emails;
+LOAD DATA LOCAL INFILE './FakeData/HasAddressData' INTO TABLE HasAddress;
+LOAD DATA LOCAL INFILE './FakeData/HasInCartData' INTO TABLE HasInCart;
+LOAD DATA LOCAL INFILE './FakeData/HasPhoneNumberData' INTO TABLE HasPhoneNumber;
+LOAD DATA LOCAL INFILE './FakeData/HasSubData' INTO TABLE HasSub;
+LOAD DATA LOCAL INFILE './FakeData/HasTagData' INTO TABLE HasTag;
+LOAD DATA LOCAL INFILE './FakeData/IsInData' INTO TABLE IsIn;
+LOAD DATA LOCAL INFILE './FakeData/ItemDescData' INTO TABLE ItemDesc;
+LOAD DATA LOCAL INFILE './FakeData/ItemsData' INTO TABLE Items;
+LOAD DATA LOCAL INFILE './FakeData/MessageData' INTO TABLE Message;
+LOAD DATA LOCAL INFILE './FakeData/OwnsData' INTO TABLE Owns;
+LOAD DATA LOCAL INFILE './FakeData/OwnsCCData' INTO TABLE OwnsCC;
+LOAD DATA LOCAL INFILE './FakeData/RateItemData' INTO TABLE RateItem;
+LOAD DATA LOCAL INFILE './FakeData/RatingData' INTO TABLE Rating;
+LOAD DATA LOCAL INFILE './FakeData/SuppliersData' INTO TABLE Suppliers;
+LOAD DATA LOCAL INFILE './FakeData/TransactionsData' INTO TABLE Transactions;
+LOAD DATA LOCAL INFILE './FakeData/UsersData' INTO TABLE Users;
+LOAD DATA LOCAL INFILE './FakeData/WishesData' INTO TABLE Wishes;
