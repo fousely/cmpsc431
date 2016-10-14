@@ -85,7 +85,6 @@ CREATE TABLE Transactions(
     ships_to INTEGER,
     ships_from INTEGER,
     PRIMARY KEY (tid),
-    UNIQUE (tracking_number , date_of_sale),
     FOREIGN KEY (seller) REFERENCES Accounts(aid) ON DELETE SET NULL,
     FOREIGN KEY (buyer) REFERENCES Users(uid) ON DELETE SET NULL,
     FOREIGN KEY (buyer, paid_with) REFERENCES OwnsCC(uid, card_number) ON DELETE SET NULL,
