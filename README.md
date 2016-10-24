@@ -10,6 +10,7 @@ source LoadData.sql
 Setting up wordpress:
 
 Step 1: Dependencies
+> sudo apt-get update
 > sudo apt-get install mysql-server-5.6 ftp php5-gd libssh2-php apache2
 
 Step 2: MySql
