@@ -12,7 +12,7 @@ Setting up wordpress:
 Step 1: Dependencies
 > sudo apt-get update
 
-> sudo apt-get install mysql-server-5.6 ftp php5-gd libssh2-php apache2
+> sudo apt-get install mysql-server-5.6 ftp php5-gd libssh2-php apache2 php5-mysqlnd-ms
 
 Step 2: MySql
 > mysql -u root -p
@@ -35,7 +35,7 @@ Step 3: Symlinks
 Step 4: Permissions and Users
 > sudo adduser teamsanchez
 
-	- Make the password 'password'
+>	- Make the password 'password'
 
 > Enter your wordpress folder and execute this command 'sudo chown -R www-data:www-data *'
 
