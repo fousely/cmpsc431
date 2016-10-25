@@ -56,7 +56,7 @@ CREATE TABLE HasAddress(
     
 # Kept date so it's easier to compare to current date
 CREATE TABLE CreditCards(
-    card_number INTEGER(16),
+    card_number BIGINT(16),
     name_on_card VARCHAR(20),
     expiration DATE,
     three_digit_code INTEGER(3),
@@ -66,7 +66,7 @@ CREATE TABLE CreditCards(
         
 CREATE TABLE OwnsCC(
     uid VARCHAR(20),
-    card_number INTEGER(16),
+    card_number BIGINT(16),
     PRIMARY KEY (uid, card_number),
     FOREIGN KEY (uid) REFERENCES Users(uid) ON DELETE CASCADE, 
     FOREIGN KEY (card_number) REFERENCES CreditCards(card_number) ON DELETE CASCADE );
@@ -81,7 +81,7 @@ CREATE TABLE OwnsCC(
     date_of_sale DATE,
     seller VARCHAR(20),
     buyer VARCHAR(20),
-    paid_with INTEGER(16),
+    paid_with BIGINT(16),
     ships_to INTEGER,
     ships_from INTEGER,
     PRIMARY KEY (tid),
@@ -97,7 +97,7 @@ CREATE TABLE Transactions(
     date_of_sale DATE,
     seller VARCHAR(20),
     buyer VARCHAR(20),
-    paid_with INTEGER(16),
+    paid_with BIGINT(16),
     ships_to INTEGER,
     ships_from INTEGER,
     PRIMARY KEY (tid) );

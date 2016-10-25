@@ -5,6 +5,7 @@
 400W-800W	Power supply that supplies over 400w but under 800W
 4GB Stick	One 4GB stick of RAM
 4X8GB Sticks	Four 8GB sticks of RAM
+4X4GB Sticks	Four 4GB sticks of RAM
 8GB Stick	One 8GB stick of RAM
 Accessories	Other computer paraphernalia
 All	Holds all categories 
@@ -13,11 +14,12 @@ Computer Case	The case that the fully built computer goes into
 CPU	Central Processing Unit
 DDR3	Type of RAM
 DDR4	Type of RAM newer than DDR3
-3.5	Drive	3.5	Storage Device
+3.5" HDD	3.5 HDD Storage Device
 GPU	Graphics Processing Unit
 HDD	Mechanical Drive
 Intel Motherboards	Intel CPU compatible motherboards
-2.5	Drive	2.5	Storage Device
+2.5" SSD	2.5 SSD Storage Device
+2.5" HDD	2.5 HDD Storage Device
 Motherboards	Motherboard
 Power Supply	Supplies power to the motherboard and other components
 Storage	Storage for files
