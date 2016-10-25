@@ -93,6 +93,7 @@ CREATE TABLE Transactions(
 # UPC can start with zero, so use varchar
 CREATE TABLE ItemDesc( 
     upc VARCHAR(20),
+    name VARCHAR(100),
     description VARCHAR(500),
     PRIMARY KEY (UPC) );
     
