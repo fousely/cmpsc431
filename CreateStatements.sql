@@ -73,8 +73,7 @@ CREATE TABLE OwnsCC(
     
 # Category will denote bid vs sale 
 # We'll have to go through every so often and delete 
-# transactions with all null FKs
-/*CREATE TABLE Transactions(
+CREATE TABLE Transactions(
     tid INTEGER AUTO_INCREMENT,
     category CHAR(1),
     tracking_number VARCHAR(35),
@@ -85,22 +84,11 @@ CREATE TABLE OwnsCC(
     ships_to INTEGER,
     ships_from INTEGER,
     PRIMARY KEY (tid),
-    FOREIGN KEY (seller) REFERENCES Accounts(aid) ON DELETE SET NULL,
-    FOREIGN KEY (buyer) REFERENCES Users(uid) ON DELETE SET NULL,
-    FOREIGN KEY (buyer, paid_with) REFERENCES OwnsCC(uid, card_number) ON DELETE SET NULL,
-    FOREIGN KEY (ships_to) REFERENCES Addresses(address_id) ON DELETE SET NULL,
-    FOREIGN KEY (ships_from) REFERENCES Addresses(address_id) ON DELETE SET NULL );*/
-CREATE TABLE Transactions(
-    tid INTEGER,
-    category CHAR(1),
-    tracking_number VARCHAR(35),
-    date_of_sale DATE,
-    seller VARCHAR(20),
-    buyer VARCHAR(20),
-    paid_with BIGINT(16),
-    ships_to INTEGER,
-    ships_from INTEGER,
-    PRIMARY KEY (tid) );
+    FOREIGN KEY (seller) REFERENCES Accounts(aid) ON DELETE NO ACTION,
+    FOREIGN KEY (buyer) REFERENCES Users(uid) ON DELETE NO ACTION,
+    FOREIGN KEY (buyer, paid_with) REFERENCES OwnsCC(uid, card_number) ON DELETE NO ACTION,
+    FOREIGN KEY (ships_to) REFERENCES Addresses(address_id) ON DELETE NO ACTION,
+    FOREIGN KEY (ships_from) REFERENCES Addresses(address_id) ON DELETE NO ACTION );
 
 # UPC can start with zero, so use varchar
 CREATE TABLE ItemDesc( 
