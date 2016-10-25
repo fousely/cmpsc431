@@ -174,9 +174,10 @@ CREATE TABLE Bid(
     FOREIGN KEY (pid) REFERENCES Items(pid) ON DELETE CASCADE );
    
 CREATE TABLE IsIn( 
-    pid INTEGER,
+    upc VARCHAR(20),
     category VARCHAR(20),
-    PRIMARY KEY (pid, category),
+    PRIMARY KEY (upc, category),
+    FOREIGN KEY (upc) REFERENCES ItemDesc(upc) ON DELETE NO ACTION,
     FOREIGN KEY (category) REFERENCES Categories(category) ON DELETE NO ACTION );
     
 CREATE TABLE RateItem( 
