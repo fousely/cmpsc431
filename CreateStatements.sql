@@ -56,7 +56,7 @@ CREATE TABLE HasAddress(
     
 # Kept date so it's easier to compare to current date
 CREATE TABLE CreditCards(
-    card_number INTEGER(16),
+    card_number BIGINT(16),
     name_on_card VARCHAR(20),
     expiration DATE,
     three_digit_code INTEGER(3),
@@ -66,45 +66,34 @@ CREATE TABLE CreditCards(
         
 CREATE TABLE OwnsCC(
     uid VARCHAR(20),
-    card_number INTEGER(16),
+    card_number BIGINT(16),
     PRIMARY KEY (uid, card_number),
     FOREIGN KEY (uid) REFERENCES Users(uid) ON DELETE CASCADE, 
     FOREIGN KEY (card_number) REFERENCES CreditCards(card_number) ON DELETE CASCADE );
     
 # Category will denote bid vs sale 
 # We'll have to go through every so often and delete 
-# transactions with all null FKs
-/*CREATE TABLE Transactions(
+CREATE TABLE Transactions(
     tid INTEGER AUTO_INCREMENT,
     category CHAR(1),
     tracking_number VARCHAR(35),
     date_of_sale DATE,
     seller VARCHAR(20),
     buyer VARCHAR(20),
-    paid_with INTEGER(16),
+    paid_with BIGINT(16),
     ships_to INTEGER,
     ships_from INTEGER,
     PRIMARY KEY (tid),
-    FOREIGN KEY (seller) REFERENCES Accounts(aid) ON DELETE SET NULL,
-    FOREIGN KEY (buyer) REFERENCES Users(uid) ON DELETE SET NULL,
-    FOREIGN KEY (buyer, paid_with) REFERENCES OwnsCC(uid, card_number) ON DELETE SET NULL,
-    FOREIGN KEY (ships_to) REFERENCES Addresses(address_id) ON DELETE SET NULL,
-    FOREIGN KEY (ships_from) REFERENCES Addresses(address_id) ON DELETE SET NULL );*/
-CREATE TABLE Transactions(
-    tid INTEGER,
-    category CHAR(1),
-    tracking_number VARCHAR(35),
-    date_of_sale DATE,
-    seller VARCHAR(20),
-    buyer VARCHAR(20),
-    paid_with INTEGER(16),
-    ships_to INTEGER,
-    ships_from INTEGER,
-    PRIMARY KEY (tid) );
+    FOREIGN KEY (seller) REFERENCES Accounts(aid) ON DELETE NO ACTION,
+    FOREIGN KEY (buyer) REFERENCES Users(uid) ON DELETE NO ACTION,
+    FOREIGN KEY (buyer, paid_with) REFERENCES OwnsCC(uid, card_number) ON DELETE NO ACTION,
+    FOREIGN KEY (ships_to) REFERENCES Addresses(address_id) ON DELETE NO ACTION,
+    FOREIGN KEY (ships_from) REFERENCES Addresses(address_id) ON DELETE NO ACTION );
 
 # UPC can start with zero, so use varchar
 CREATE TABLE ItemDesc( 
     upc VARCHAR(20),
+    name VARCHAR(100),
     description VARCHAR(500),
     PRIMARY KEY (UPC) );
     
@@ -185,9 +174,10 @@ CREATE TABLE Bid(
     FOREIGN KEY (pid) REFERENCES Items(pid) ON DELETE CASCADE );
    
 CREATE TABLE IsIn( 
-    pid INTEGER,
+    upc VARCHAR(20),
     category VARCHAR(20),
-    PRIMARY KEY (pid, category),
+    PRIMARY KEY (upc, category),
+    FOREIGN KEY (upc) REFERENCES ItemDesc(upc) ON DELETE NO ACTION,
     FOREIGN KEY (category) REFERENCES Categories(category) ON DELETE NO ACTION );
     
 CREATE TABLE RateItem( 
