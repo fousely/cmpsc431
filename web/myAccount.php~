@@ -384,6 +384,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		echo "Welcome back " . $_SESSION['name'] . "!<br><br>";
 
 		echo '<p class="auto-style4">Your Items:</p>
+			<p class="auto-style4">&nbsp;</p>
 			<table style="width: 100%">
 				<tr>
 					<td class="auto-style6" width="200"><strong>Name</strong></td>

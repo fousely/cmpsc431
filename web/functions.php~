@@ -24,9 +24,11 @@ function getDBConnection() {
 }
 
 function test_input($data) {
+	echo "$data<br>";
   $data = trim($data);
   $data = stripslashes($data);
   $data = htmlspecialchars($data);
+	echo "$data<br>";
   return $data;
 }
 
