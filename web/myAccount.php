@@ -1,7 +1,12 @@
 <?php
 session_start();
 
+include 'functions.php';
+$r = getDBConnection();
+
+
 // define variables and set to empty values
+$error = 0;
 $aidErr = $emailErr = $full_nameErr = $genderErr = $dobErr = "";
 $streetErr = $cityErr = $zipErr = $phoneNumberErr = $passwordErr = "";
 $aid = $email = $full_name = $gender = $dob = $phoneNumber = $street = $city = $zip = $state = $password = "";
@@ -11,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 	// Check aid is unique SELECT count(*) FROM Accounts WHERE aid = aid; = 0
 	if (empty($_POST["aid"])) {
 		$aidErr = "Username is required";
+		$error = 1;
 	} else {
 		$aid = test_input($_POST["aid"]);
 	}
@@ -18,48 +24,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 	// Check email is unique SELECT count(*) FROM HasEmail WHERE email = email; = 0
 	if (empty($_POST["email"])) {
 		$emailErr = "Email is required";
+		$error = 1;
 	} else {
 		$email = test_input($_POST["email"]);
 	}
     
 	if (empty($_POST["full_name"])) {
 		$full_nameErr = "Full name is required";
+		$error = 1;
 	} else {
 		$full_name = test_input($_POST["full_name"]);
 	}
     
 	if (empty($_POST["gender"])) {
 		$genderErr = "Gender is required";
+		$error = 1;
 	} else {
 		$gender = test_input($_POST["gender"]);
 	}
     
 	if (empty($_POST["dob"])) {
 		$dobErr = "Date of birth is required";
+		$error = 1;
 	} else {
 		$dob = test_input($_POST["dob"]);
 	}
     
 	if (empty($_POST["phoneNumber"])) {
 		$phoneNumberErr = "Phone number is required";
+		$error = 1;
 	} else {
 		$phoneNumber = test_input($_POST["phoneNumber"]);
 	}
     
 	if (empty($_POST["street"])) {
 		$streetErr = "Street is required";
+		$error = 1;
 	} else {
 		$street = test_input($_POST["street"]);
 	}
 
 	if (empty($_POST["city"])) {
 		$cityErr = "City is required";
+		$error = 1;
 	} else {
 		$city = test_input($_POST["city"]);
 	}
 
 	if (empty($_POST["zip"])) {
 		$zipErr = "Zip is required";
+		$error = 1;
 	} else {
 		$zip = test_input($_POST["zip"]);
 	}
@@ -69,11 +83,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 	if (empty($_POST["password"]) || empty($_POST["password2"]) ||
         strcmp($_POST["password"], $_POST["password2"]) <> 0) {
 		$passwordErr = "Password doesn't match";
+		$error = 1;
 	} else {
 		$password = test_input($_POST["password"]);
 	}
 
-	// If no errors, add to database and login
+	// If $error = 0, add to database and login
 	//   Add session variable aid
 
 	/*
@@ -111,18 +126,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 
 // Login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
-	if (empty($_POST["aid"])) {
-		$loginErr = "Username is required";
+	if (empty($_POST["username"]) || empty($_POST["password"])) {
+		$loginErr = "Username and password is required";
 	} else {
-		$aid = test_input($_POST["username"]);
+		$username = test_input($_POST["username"]);
 	}
-    
 	$password = test_input($_POST["password"]);
 
     	// Check database for a match
 	// If exists, set $_SESSION['aid'] = $aid
 	// SELECT COUNT(*) FROM Accounts WHERE aid = username AND password = password;
 	// If returns 1 row, good username/password combo
+
+	$query = "SELECT * FROM Suppliers WHERE sid = \"$username\";";
+	$rs = mysql_query($query);
+
+	if ($row = mysql_fetch_assoc($rs)) {
+		// Supplier
+		$query = "SELECT * FROM Accounts A, Suppliers S WHERE S.sid = \"$username\" AND A.aid = S.sid;";
+		$rs = mysql_query($query);
+		$row = mysql_fetch_assoc($rs);
+
+		if (empty($row) || strcmp($row['pass'], $password) <> 0) {
+			$loginErr = "No match for username and password. Please try again.";
+		}
+	} else {
+		$query = "SELECT * FROM Accounts A, Users U WHERE U.uid = \"$username\" AND A.aid = U.uid;";
+		$rs = mysql_query($query);
+		$row = mysql_fetch_assoc($rs);
+
+		if (empty($row) || strcmp($row['pass'], $password) <> 0) {
+			$loginErr = "No match for username and password. Please try again.";
+		}
+	}
+
+	if (empty($loginErr)) {
+		$_SESSION['aid'] = $_POST["username"];
+		$_SESSION['name'] = $row['full_name'];
+	}
 }
 
 
@@ -308,7 +349,11 @@ function test_input($data) {
 			</form><br><br>';
 
 	} else {
-		echo "Welcome back " . $_SESSION['aid'] . "!";
+		echo "Welcome back " . $_SESSION['name'] . "!";
+
+		
+
+		echo '<br><br><a href="logout.php">Sign out</a>';
 	}
 
 ?>

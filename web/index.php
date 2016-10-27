@@ -35,21 +35,8 @@ session_start();
 <body bgcolor="#CCFFFF">
 
 <?php
-
-$host = "localhost";
-$user = "teamsanchez";
-$pass = "password";
-$db   = "sanchez";
-
-$r = mysql_connect($host, $user, $pass);
-
-if (!$r) {
-	echo "Could not connect to server\n";
-	trigger_error(mysql_error(), E_USER_ERROR);
-}
-
-mysql_select_db($db);
-
+include 'functions.php';
+$r = getDBConnection();
 ?>
 <p>
 <meta charset="utf-8" />
@@ -66,6 +53,12 @@ mysql_select_db($db);
 		<td class="auto-style3" style="width: 150px"><a href="myAccount.php">My Account</a></td>
 	</tr>
 </table>
+
+<?php
+if (!empty($_SESSION['name']))
+	echo "<br>Hello " . $_SESSION['name'];
+?>
+
 <p>&nbsp;</p>
 <p class="auto-style4">All Items:</p>
 <p class="auto-style4">&nbsp;</p>
@@ -79,7 +72,6 @@ mysql_select_db($db);
 		<td class="auto-style6" width="100"><strong>Bid</strong></td>
 	</tr>
 	<?php 
-
 		$query = "SELECT D.name, D.description, I.list_price, I.auction_price FROM Items I, ItemDesc D WHERE I.upc = D.upc AND (I.bid_end = NULL OR I.bid_end > NOW())";
 
 		$rs = mysql_query($query);
