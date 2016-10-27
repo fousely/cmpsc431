@@ -1,6 +1,6 @@
 Step 1: Dependencies
 
-> sudo apt-get install mysql-server-5.6 apache2 php5-gd libssh2-php
+> sudo apt-get install mysql-server-5.6 apache2 php5-gd libssh2-php libapache2-mod-php5 php5-mysql
 
 
 Step 2: MySql
