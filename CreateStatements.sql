@@ -197,3 +197,9 @@ CREATE TABLE Owns(
     FOREIGN KEY (pid) REFERENCES Items(pid) ON DELETE CASCADE,
     FOREIGN KEY (owner_id) REFERENCES Accounts(aid) ON DELETE NO ACTION );
 
+CREATE USER teamsanchez@localhost IDENTIFIED BY 'password';
+
+GRANT ALL PRIVILEGES ON sanchez.* TO teamsanchez@localhost;
+
+FLUSH PRIVILEGES;
+

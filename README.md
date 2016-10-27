@@ -1,37 +1,24 @@
-How to run database stuff:
-
-> mysql -u root -p --local-infile sanchez
-
-> source CreateStatements.sql
-
-> source LoadData.sql
-
-
 Step 1: Dependencies
 
-> sudo apt-get install mysql-server-5.6 ftp php5-gd libssh2-php apache2
+> sudo apt-get install mysql-server-5.6 apache2 php5-gd libssh2-php
 
 
 Step 2: MySql
 
-> mysql -u root -p 
+> mysql -u root -p --local-infile
 
 > 	- Enter password. 
 
-> CREATE DATABASE wordpress; 
+> SOURCE CreateStatements.sql;
 
-> CREATE USER teamsanchez@localhost IDENTIFIED BY 'password'; 
-
-> GRANT ALL PRIVILEGES ON wordpress.* TO teamsanchez@localhost; 
-
-> FLUSH PRIVILEGES;
+> SOURCE LoadData.sql;
 
 
 Step 3: Symlinks
 
 > sudo ln -sr /home/stephen/Desktop/git/web/* /var/www/html/ 
 
-> 	- The first directory is where you git folder is. EX) '{path to git}/git/wordpress/*'
+> 	- The first directory is where you git folder is. EX) '{path to git}/git/web/*'
 
 
 Step 4: Connect
