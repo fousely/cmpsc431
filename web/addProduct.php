@@ -61,8 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	if (strcmp($auctionPrice,"") == 0) {
 		$auctionPrice = "NULL";
 		$reservePrice = "NULL";
-		$bidStart = "NULL";
-		$bidEnd = "NULL";
+		$bidStart = "0";
+		$bidEnd = "0";
 	}
 
 	if (strcmp($listPrice,"") == 0) {

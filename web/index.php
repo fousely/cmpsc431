@@ -302,7 +302,7 @@ if (!empty($_SESSION['name']))
 		<td class="auto-style6" width="100"><strong>Bid</strong></td>
 	</tr>
 	<?php 
-		$query = "SELECT D.name, D.description, I.list_price, I.auction_price FROM Items I, ItemDesc D WHERE I.upc = D.upc AND (I.bid_end = NULL OR I.bid_end > NOW())";
+		$query = "SELECT D.name, D.description, I.list_price, I.auction_price FROM Items I, ItemDesc D WHERE I.upc = D.upc AND (I.bid_end = 0 OR I.bid_end > NOW())";
 
 		$rs = mysql_query($query);
 
