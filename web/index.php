@@ -271,7 +271,7 @@ $r = getDBConnection();
 <p>
 <meta charset="utf-8" />
 <b id="docs-internal-guid-6a6da0ae-035a-24a6-c41b-9923ab67532f" style="font-weight: normal;">
-<img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /><span class="auto-style1">
+<a href="index.php"><img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /></a><span class="auto-style1">
 </span><span class="auto-style2">Lil' Bits Computer Hardware</span></b></p>
 <p>&nbsp;</p>
 <table style="width: 100%">
@@ -286,7 +286,7 @@ $r = getDBConnection();
 
 <?php
 if (!empty($_SESSION['name']))
-	echo "<br>Hello " . $_SESSION['name'];
+	echo "<br>Hello, " . $_SESSION['name']. "!";
 ?>
 
 <p>&nbsp;</p>

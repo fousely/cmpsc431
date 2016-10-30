@@ -58,14 +58,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	$bidStart = test_input($_POST["bidStart"]);
 	$bidEnd = test_input($_POST["bidEnd"]);
 
-	if (strcmp($auctionPrice,"") == 0) {
+	if (strcmp($auctionPrice,"") == 0 && $error == 0) {
 		$auctionPrice = "NULL";
 		$reservePrice = "NULL";
 		$bidStart = "0";
 		$bidEnd = "0";
 	}
 
-	if (strcmp($listPrice,"") == 0) {
+	if (strcmp($listPrice,"") == 0 && $error == 0) {
 		$listPrice = "\N";
 	}
 
@@ -162,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 <p>
 <meta charset="utf-8" />
 <b id="docs-internal-guid-6a6da0ae-035a-24a6-c41b-9923ab67532f" style="font-weight: normal;">
-<img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /><span class="auto-style1">
+<a href="index.php"><img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /></a><span class="auto-style1">
 </span><span class="auto-style2">Lil' Bits Computer Hardware</span></b></p>
 <p>&nbsp;</p>
 <table style="width: 100%">
@@ -187,7 +187,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	$query = "SELECT * FROM ItemDesc;";
 	$rs = mysql_query($query);
 	while($row = mysql_fetch_assoc($rs)) {
-		echo '<option value="' . $row['upc'] . '">' . $row['name'] . '</option>';
+		echo '<option value="' . $row['upc'] . '"';
+		if ($upc == $row['upc']) {
+			echo ' selected="selected';
+		}
+		echo '>' . $row['name'] . '</option>';	
 	}
 	echo '</select><br><br>Or create a new product:<br>
 
@@ -206,8 +210,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	$rs = mysql_query($query);
 	echo $rs;
 	while($row = mysql_fetch_assoc($rs)) {
-		echo '<option value="' . $row['address_id'] . '">' . $row['street'] .
-			', ' . $row['city'] . ", " . $row['state'] . " " . $row['zip'] . '</option>';
+		echo '<option value="' . $row['address_id'] . '"';
+		if ($location == $row['address_id']) {
+			echo ' selected="selected"';
+		}
+		echo '>' . $row['street'] . ', ' . $row['city'] . ", " . $row['state'] . 
+			" " . $row['zip'] . '</option>';
 	}
 	echo '</select><br><br>
 
