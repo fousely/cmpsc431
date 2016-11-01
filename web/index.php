@@ -302,7 +302,15 @@ if (!empty($_SESSION['name']))
 		<td class="auto-style6" width="100"><strong>Bid</strong></td>
 	</tr>
 	<?php 
-		$query = "SELECT D.name, D.description, I.list_price, I.auction_price FROM Items I, ItemDesc D WHERE I.upc = D.upc AND (I.bid_end = 0 OR I.bid_end > NOW())";
+		$query = "SELECT D.name, D.description, I.list_price, I.auction_price, B.auction_price2
+		FROM Items I
+	LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
+	ON B.pid = I.pid
+	LEFT JOIN ItemDesc D
+	ON D.upc = I.upc
+	WHERE I.upc = D.upc 
+	AND (I.bid_end = 0 OR I.bid_end > NOW())
+	ORDER BY (D.name)";
 
 		$rs = mysql_query($query);
 
@@ -322,7 +330,12 @@ if (!empty($_SESSION['name']))
 			if (is_null($row['auction_price'])) {
 				echo "Buy only";
 			} else {
-				echo "$" . $row['auction_price'];
+				if ($row['auction_price']>$row['auction_price2']) {
+					echo "$" . $row['auction_price'];
+					}
+				else {
+					echo "$" . $row['auction_price2'];
+					}
 			}
 
 			echo "</td><td class=\"auto-style5\">";

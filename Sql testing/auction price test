@@ -1,0 +1,27 @@
+#new sql
+SELECT D.name, D.description, I.list_price, I.auction_price, B.auction_price2
+FROM Items I
+LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
+ON B.pid = I.pid
+LEFT JOIN ItemDesc D
+ON D.upc = I.upc
+WHERE I.upc = D.upc 
+AND (I.bid_end = 0 OR I.bid_end > NOW())
+ORDER BY (D.name);
+
+# orginal 
+
+SELECT D.name, D.description, I.list_price, I.auction_price 
+FROM Items I, ItemDesc D 
+WHERE I.upc = D.upc 
+AND (I.bid_end = 0 OR I.bid_end > NOW());
+
+
+# insert in bid to test use Also in index.php change the SQL to end with 
+# AND B.pid=36 insead of Order by (d.name) 
+
+INSERT INTO Bid (uid,pid,b_date,amount)
+VALUES 
+('backtofunnyones',36,'2016-11-01',150),
+('littler1cky',36,'2016-11-01',300),
+('mees33ks',36,'2016-11-01',420);
