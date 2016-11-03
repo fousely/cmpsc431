@@ -383,8 +383,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		}
 		echo "</table><br><br>";
 		
-		echo '<a href="addProduct.php">Add a product</a>';
-		echo '<br><br><a href="logout.php">Sign out</a>';
+		echo '<a href="addProduct.php">Add a product</a>
+			<br><br><a href="myInfo.php">Your Info</a>
+			<br><br><a href="logout.php">Sign out</a>';
 	}
 
 ?>
