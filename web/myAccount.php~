@@ -393,7 +393,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="100"><strong>Ships To</strong></td>
 					<td class="auto-style6" width="100"><strong>Ships From</strong></td>
 				</tr>';
-		$query = "SELECT T.seller, T.tracking_number, T.date_of_sale, T.paid_with, T.ships_to, T.ships_from FROM Transactions T WHERE T.buyer = \"" . $_SESSION['aid'];
+		$query = "SELECT T.seller, T.tracking_number, T.date_of_sale, T.paid_with, T.ships_to, T.ships_from FROM Transactions T WHERE T.buyer = \"" . $_SESSION['aid'] .;
 
 		$rs = mysql_query($query);
 
