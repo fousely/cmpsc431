@@ -23,6 +23,21 @@ function getDBConnection() {
 	return $_SESSION['dbConnect'];
 }
 
+function goToPage($page) {
+	header("Location: " . getPageURL($page));
+}
+
+function getPageURL($page) {
+	$host  = $_SERVER['HTTP_HOST'];
+	$uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+	$extra = $page;
+	return "http://$host$uri/$extra";
+}
+
+function getItemURL($pid) {
+	return getPageURL("product.php") . "?pid=$pid";
+}
+
 function test_input($data) {
   $data = trim($data);
   $data = stripslashes($data);
@@ -81,6 +96,15 @@ function addStatesDropdown($selected) {
 		echo '>' . $name . '</option>';
 	}
 	echo '</select>';
+}
+
+function getURLParameter($name) {
+	$val = filter_input( INPUT_GET, $name, FILTER_SANITIZE_URL );
+	if ($val == NULL || $val == False) {
+		$val == NULL;
+	}
+
+	return $val;
 }
 
 ?>

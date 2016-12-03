@@ -302,7 +302,7 @@ if (!empty($_SESSION['name']))
 		<td class="auto-style6" width="100"><strong>Bid</strong></td>
 	</tr>
 	<?php 
-		$query = "SELECT D.name, D.description, I.list_price, I.auction_price, B.auction_price2
+		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, B.auction_price2
 		FROM Items I
 	LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
 	ON B.pid = I.pid
@@ -316,7 +316,8 @@ if (!empty($_SESSION['name']))
 
 		while ($row = mysql_fetch_assoc($rs)) {
 			echo "<tr>";
-			echo "<td class=\"auto-style5\">" . $row['name'] . "</td>" .
+			echo "<td class=\"auto-style5\"><a href=" . getItemURL($row['pid']) . ">" . 
+				$row['name'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row['description'] . "</td><td>";
 				
 			if (is_null($row['list_price'])) {
