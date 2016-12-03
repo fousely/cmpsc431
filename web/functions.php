@@ -38,6 +38,20 @@ function getItemURL($pid) {
 	return getPageURL("product.php") . "?pid=$pid";
 }
 
+function countdownTimer($date, $endMessage) {
+	echo '<script language="JavaScript">
+		TargetDate = "' . $date . '";
+		BackColor = "palegreen";
+		ForeColor = "navy";
+		CountActive = true;
+		CountStepper = -1;
+		LeadingZero = true;
+		DisplayFormat = "%%D%% Days, %%H%% Hours, %%M%% Minutes, %%S%% Seconds.";
+		FinishMessage = "' . $endMessage . '";
+		</script>
+		<script language="JavaScript" src="//scripts.hashemian.com/js/countdown.js"></script>';
+}
+
 function test_input($data) {
   $data = trim($data);
   $data = stripslashes($data);

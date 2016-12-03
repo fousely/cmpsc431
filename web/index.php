@@ -302,14 +302,16 @@ if (!empty($_SESSION['name']))
 		<td class="auto-style6" width="100"><strong>Bid</strong></td>
 	</tr>
 	<?php 
-		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, B.auction_price2
-		FROM Items I
+		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, I.bid_end,  
+		B.auction_price2
+	FROM Items I
 	LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
 	ON B.pid = I.pid
 	LEFT JOIN ItemDesc D
 	ON D.upc = I.upc
 	WHERE I.upc = D.upc 
-	AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()))
+	AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()) OR 
+		(I.included_in = 1 AND I.list_price > 0))
 	ORDER BY (D.name)";
 
 		$rs = mysql_query($query);
@@ -330,7 +332,7 @@ if (!empty($_SESSION['name']))
 
 			if (is_null($row['auction_price'])) {
 				echo "Buy only";
-			} else {
+			} else if ($row['bid_end'] < date()) {
 				if ($row['auction_price']>$row['auction_price2']) {
 					echo "$" . $row['auction_price'];
 					}
@@ -347,7 +349,7 @@ if (!empty($_SESSION['name']))
 
 			echo "</td><td class=\"auto-style5\">";
 
-			if (!is_null($row['auction_price'])) {
+			if (!is_null($row['auction_price']) && $row['bid_end'] < date()) {
 				echo "Bid";
 			}
 

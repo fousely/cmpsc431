@@ -76,7 +76,7 @@ if ($pid == False){
 
 // Find the item (only if it is not bought already, not up for auction or currently being auctioned off)
 $query = "SELECT * FROM Items WHERE pid = $pid AND 
-	(bid_end = 0 OR (bid_end > NOW() AND bid_start <= NOW())) AND
+	(bid_end = 0 OR (bid_end > NOW() AND bid_start <= NOW()) OR (list_price > 0 AND included_in = 1)) AND
 	included_in = 1;";
 $row = mysql_fetch_assoc(mysql_query($query));
 
@@ -129,13 +129,14 @@ if ($listPrice > 0) {
 	// $$ Need to add ability to buy item
 }
 
-if ($auctionPrice > 0) {
+if ($auctionPrice > 0 && $bidEnd < date()) {
 	// Product is up for auction -> Get highest bid
 	$query = "SELECT MAX(amount) AS amount FROM Bid WHERE pid = \"$pid\";";
 	$row = mysql_fetch_assoc(mysql_query($query));
 	$maxBid = max($row['amount'], $auctionPrice);
 	echo "Current auction price: $" . $maxBid . "<br>
 		Auction ends at $bidEnd <br>";
+	countdownTimer($bidEnd, "Auction has ended");
 	
 	// Bid form
 	echo '<form action="?????" method="post">
