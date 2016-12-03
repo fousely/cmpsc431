@@ -386,25 +386,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		echo '<p class="auto-style4">Your Transactions:</p>
 			<table style="width: 100%">
 				<tr>
-					<td class="auto-style6" width="100"><strong>Seller</strong></td>
-					<td class="auto-style6" width="100"><strong>Tracking</strong></td>
-					<td class="auto-style6" width="100"><strong>Sale Date</strong></td>
-					<td class="auto-style6" width="100"><strong>Paid With</strong></td>
-					<td class="auto-style6" width="100"><strong>Ships To</strong></td>
-					<td class="auto-style6" width="100"><strong>Ships From</strong></td>
+					<td class="auto-style6" width="40"><strong>Item UPC</strong></td>
+					<td class="auto-style6" width="40"><strong>Seller</strong></td>
+					<td class="auto-style6" width="50"><strong>Tracking</strong></td>
+					<td class="auto-style6" width="20"><strong>Sale Date</strong></td>
+					<td class="auto-style6" width="30"><strong>Paid With</strong></td>
+					<td class="auto-style6" width="150"><strong>Ships To</strong></td>
+					<td class="auto-style6" width="150"><strong>Ships From</strong></td>
 				</tr>';
-		$query2 = "SELECT T.seller, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2 WHERE T.buyer = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id";
+		$query2 = "SELECT I.upc, T.seller, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.buyer = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
 
 		$rs2 = mysql_query($query2);
 
 		while ($row2 = mysql_fetch_assoc($rs2)) {
 			echo "<tr>";
-			echo "<td class=\"auto-style5\">" . $row2['seller'] . "</td>" .
+			echo "<td class=\"auto-style5\">" . $row2['upc'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['seller'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row2['tracking_number'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row2['date_of_sale'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row2['paid_with'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . $row2['zip_to'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['street_from'] . ", " . $row2['city_from'] . ", " . $row2['state_from'] . $row2['zip_from'] . "</td>";
+				"<td class=\"auto-style5\">" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['street_from'] . ", " . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td>";
 			echo "</tr>";
 		}
 		echo "</table><br><br>";
