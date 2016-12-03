@@ -1,5 +1,7 @@
 <?php
+include 'functions.php';
 session_start();
+$r = getDBConnection();
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -264,10 +266,6 @@ window.onload=Delay;
 
 <body bgcolor="#CCFFFF">
 
-<?php
-include 'functions.php';
-$r = getDBConnection();
-?>
 <p>
 <meta charset="utf-8" />
 <b id="docs-internal-guid-6a6da0ae-035a-24a6-c41b-9923ab67532f" style="font-weight: normal;">
@@ -302,6 +300,7 @@ if (!empty($_SESSION['name']))
 		<td class="auto-style6" width="100"><strong>Bid</strong></td>
 	</tr>
 	<?php 
+		endAuctions();
 		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, I.bid_end,  
 		B.auction_price2
 	FROM Items I

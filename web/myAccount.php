@@ -88,6 +88,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 		$password = test_input($_POST["password"]);
 	}
 
+	if (empty($_POST["ccNum"])) {
+		$ccNumErr = "Credit card number is required";
+		$error = 1;
+	} else {
+		$ccNum = test_input($_POST["ccNum"]);
+	}
+
+	if (empty($_POST["ccExp"])) {
+		$ccExpErr = "Credit card expiration is required";
+		$error = 1;
+	} else {
+		$ccExp = test_input($_POST["ccExp"]);
+	}
+
+	if (empty($_POST["cc3"])) {
+		$cc3Err = "Credit card 3 digit code is required";
+		$error = 1;
+	} else {
+		$cc3 = test_input($_POST["cc3"]);
+	}
+    
+
 	// If $error = 0, add to database and login
 	//   Add session variable aid
 
@@ -133,7 +155,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 		$rs = mysql_query($query);
 		$rollback = checkError($rs, $commitMessage);
 
-		$query = "INSERT INTO Users (uid, gender, dob) VALUES (\"$aid\", \"$gender\", \"$dob\");";
+		$query = "INSERT INTO Users (uid, gender, dob) VALUES (\"$aid\", \"$gender\", \"" .
+			date("Y-m-d", strtotime($dob)) . "\");";
 		$rs = mysql_query($query);
 		$rollback = checkError($rs, $commitMessage);
 
@@ -146,8 +169,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 			 \"$state\", \"$zip\");";
 		$rs = mysql_query($query);
 		$rollback = checkError($rs, $commitMessage);
+		
+		$addressID = mysql_insert_id();
+		$query = "INSERT INTO HasAddress (aid, address_id) VALUES (\"$aid\", \"$addressID\");";
+		$rs = mysql_query($query);
+		$rollback = checkError($rs, $commitMessage);
 
-		$query = "INSERT INTO HasAddress (aid, address_id) VALUES (\"$aid\", " . mysql_insert_id() . ");";
+
+		$query = "INSERT INTO CreditCards (card_number, name_on_card, expiration, 
+			three_digit_code, bills_to) VALUES (\"$ccNum\", \"$full_name\", \"" .
+			date("Y-m-d", strtotime($ccExp)) . "\", \"$cc3\", \"$addressID\");";
+		$rs = mysql_query($query);
+		$rollback = checkError($rs, $commitMessage);
+			
+		$query = "INSERT INTO OwnsCC (uid, card_number) VALUES (\"$aid\", \"$ccNum\");";
 		$rs = mysql_query($query);
 		$rollback = checkError($rs, $commitMessage);
 			
@@ -303,7 +338,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		echo $zipErr . '</span><br>
 			Address - State: ';
 		addStatesDropdown($state);
-
+		echo '<br>
+			Credit Card Number: <input type="text" name="ccNum" value = "';
+		echo $ccNum . '">
+    			<span class="error">*';
+		
+		echo $ccNumErr . '</span><br>
+			Credit Card Expiration: <input type="date" name="ccExp" value = "';
+		echo $ccExp . '">
+    			<span class="error">*';
+		
+		echo $ccExpErr . '</span><br>
+			Credit Card 3 Digit Code: <input type="text" name="cc3" value = "';
+		echo $cc3 . '">
+    			<span class="error">*';
+		
+		echo $cc3Err . '</span>';
 		echo '<br>
 			Password: <input type="password" name="password">
     			<span class="error">*';

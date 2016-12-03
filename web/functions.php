@@ -77,7 +77,7 @@ function checkError(&$rs, &$commitErr) {
 		return 1;
 	}
 
-	return 0;
+	return sizeof($commitErr);
 }
 
 function addStatesDropdown($selected) {
@@ -119,6 +119,74 @@ function getURLParameter($name) {
 	}
 
 	return $val;
+}
+
+function getUserAddress($pid) {
+	$r = getDBConnection();
+	$query = "SELECT A.address_id FROM Addresses A, HasAddress H
+		WHERE A.address_id = H.address_id AND H.aid = \"$pid\";";
+	$ret = mysql_fetch_assoc(mysql_query($query));
+	return $ret['address_id'];
+}
+
+function getUserCC($pid) {
+	$r = getDBConnection();
+	$query = "SELECT card_number FROM OwnsCC
+		WHERE uid = \"$pid\";";
+	$ret = mysql_fetch_assoc(mysql_query($query));
+	return $ret['card_number'];
+}
+
+function endAuctions() {
+	// Get items whose auction ended with a winner
+	$r = getDBConnection();
+	$query = "SELECT * FROM Items I, Owns O, Bid B WHERE I.pid = B.pid AND I.pid = O.pid AND 
+			I.bid_end <= NOW() AND I.included_in = 1 AND
+			B.amount = (SELECT MAX(B.amount) FROM Bid B2 WHERE B2.pid = I.pid)
+			AND B.amount > I.reserve_price ;";
+	$rs = mysql_query($query);
+
+	// Loop through such items
+	while ($row = mysql_fetch_assoc($rs)) {
+		$pid = $row['pid'];
+		$trackingNum = rand();
+		$dateOfSale = date("Y-m-d");
+		$seller = $row['owner_id'];
+		$buyer = $row['uid'];
+		$paidWith = getUserCC($buyer);
+		$shipTo = getUserAddress($buyer);
+		$shipFrom = $row['location'];
+
+		// Add to database
+		beginTransaction();
+		$rollback = 0;
+		$commitMessage = array();
+		
+		$query = "INSERT INTO Transactions (category, tracking_number, date_of_sale,
+				seller, buyer, paid_with, ships_to, ships_from) VALUES 
+				(\"b\", \"$trackingNum\", \"$dateOfSale\", \"$seller\", \"$buyer\", 
+				\"$paidWith\", \"$shipTo\", \"$shipFrom\");";
+		$rs = mysql_query($query);
+		$rollback = checkError($rs, $commitMessage);
+
+		// Get the transaction id
+		$tid = mysql_insert_id();
+
+		$query = "UPDATE Items SET included_in = \"$tid\" WHERE pid = \"$pid\";";
+		$rs = mysql_query($query);
+		$rollback = checkError($rs, $commitMessage);
+
+			
+		if ($rollback == 0) {
+			commitTransaction();
+		} else {
+			rollbackTransaction();
+			echo '<span class="error">' . "$pid: <br>";
+			foreach ($commitMessage as $message)
+			    echo "$message<br>";
+			echo '<br></span>';
+		}
+	}
 }
 
 ?>
