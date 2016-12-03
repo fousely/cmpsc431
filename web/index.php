@@ -309,7 +309,7 @@ if (!empty($_SESSION['name']))
 	LEFT JOIN ItemDesc D
 	ON D.upc = I.upc
 	WHERE I.upc = D.upc 
-	AND (I.bid_end = 0 OR I.bid_end > NOW())
+	AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()))
 	ORDER BY (D.name)";
 
 		$rs = mysql_query($query);
