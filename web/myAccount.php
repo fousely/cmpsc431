@@ -393,13 +393,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="100"><strong>Buy Now</strong></td>
 					<td class="auto-style6" width="100"><strong>Bid</strong></td>
 				</tr>';
-		$query = "SELECT D.name, D.description, I.list_price, I.auction_price FROM Items I, ItemDesc D, Owns O WHERE I.upc = D.upc AND O.owner_id = \"" . $_SESSION['aid'] . "\" AND I.pid = O.pid";
+		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price FROM Items I, ItemDesc D, Owns O WHERE I.upc = D.upc AND O.owner_id = \"" . $_SESSION['aid'] . "\" AND I.pid = O.pid";
 
 		$rs = mysql_query($query);
 
 		while ($row = mysql_fetch_assoc($rs)) {
 			echo "<tr>";
-			echo "<td class=\"auto-style5\">" . $row['name'] . "</td>" .
+			echo "<td class=\"auto-style5\"><a href=" . getItemURL($row['pid']) . ">" .
+				$row['name'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row['description'] . "</td><td>";
 				
 			if (is_null($row['list_price'])) {

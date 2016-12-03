@@ -331,7 +331,7 @@ if (!empty($_SESSION['name']))
 
 			if (is_null($row['auction_price'])) {
 				echo "Buy only";
-			} else if ($row['bid_end'] < date()) {
+			} else if (time() < strtotime($row['bid_end'])) {
 				if ($row['auction_price']>$row['auction_price2']) {
 					echo "$" . $row['auction_price'];
 					}
@@ -348,7 +348,7 @@ if (!empty($_SESSION['name']))
 
 			echo "</td><td class=\"auto-style5\">";
 
-			if (!is_null($row['auction_price']) && $row['bid_end'] < date()) {
+			if (!is_null($row['auction_price']) && time() < strtotime($row['bid_end'])) {
 				echo "Bid";
 			}
 

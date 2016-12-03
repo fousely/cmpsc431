@@ -189,7 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	while($row = mysql_fetch_assoc($rs)) {
 		echo '<option value="' . $row['upc'] . '"';
 		if ($upc == $row['upc']) {
-			echo ' selected="selected';
+			echo ' selected="selected"';
 		}
 		echo '>' . $row['name'] . '</option>';	
 	}
@@ -203,21 +203,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	echo $desc . '"> <span class="error">*<br>';
 	echo "$newProductErr <br> $existingUPCErr" . '</span><br><br>
 
-		Location: <select name="location">';
+		Location:';
 
-	$query = 'SELECT * FROM Addresses A, HasAddress H WHERE H.aid = "' . $_SESSION["aid"] . '" 
-			AND A.address_id = H.address_id;';
-	$rs = mysql_query($query);
-	echo $rs;
-	while($row = mysql_fetch_assoc($rs)) {
-		echo '<option value="' . $row['address_id'] . '"';
-		if ($location == $row['address_id']) {
-			echo ' selected="selected"';
-		}
-		echo '>' . $row['street'] . ', ' . $row['city'] . ", " . $row['state'] . 
-			" " . $row['zip'] . '</option>';
-	}
-	echo '</select><br><br>
+	addUserAddressesDropDown($_SESSION["aid"], $location);
+
+	echo '<br><br>
 
 		If the item is up for direct buy, enter a list price. Otherwise leave it blank.<br>
 		List Price: <input type="number" name="listPrice" min="1" step="0.01" value = "';

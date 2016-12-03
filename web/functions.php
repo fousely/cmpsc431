@@ -112,6 +112,45 @@ function addStatesDropdown($selected) {
 	echo '</select>';
 }
 
+function addUserCCDropdown($pid, $selectedCC) {
+	$query = 'SELECT * FROM CreditCards C, OwnsCC O WHERE O.uid = "' . $pid . '" 
+			AND O.card_number = C.card_number;';
+	$rs = mysql_query($query);
+
+	echo '<select name="creditCard">';
+
+	while($row = mysql_fetch_assoc($rs)) {
+		echo '<option value="' . $row['card_number'] . '"';
+		if ($selectedCC == $row['card_number']) {
+			echo ' selected="selected"';
+		}
+		echo '>' . $row['card_number'] . ', Exp: ' . 
+			date("m/y", strtotime($row['expiration'])) . '</option>';
+	}
+
+	echo '</select>';
+}
+
+
+function addUserAddressesDropDown($pid, $selectedLocation) {
+	$query = 'SELECT * FROM Addresses A, HasAddress H WHERE H.aid = "' . $pid . '" 
+			AND A.address_id = H.address_id;';
+	$rs = mysql_query($query);
+
+	echo '<select name="location">';
+
+	while($row = mysql_fetch_assoc($rs)) {
+		echo '<option value="' . $row['address_id'] . '"';
+		if ($selectedLocation == $row['address_id']) {
+			echo ' selected="selected"';
+		}
+		echo '>' . $row['street'] . ', ' . $row['city'] . ", " . $row['state'] . 
+			" " . $row['zip'] . '</option>';
+	}
+
+	echo '</select>';
+}
+
 function getURLParameter($name) {
 	$val = filter_input( INPUT_GET, $name, FILTER_SANITIZE_URL );
 	if ($val == NULL || $val == False) {

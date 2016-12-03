@@ -169,9 +169,13 @@ CREATE TABLE Bid(
     pid INTEGER,
     b_date DATE,
     amount REAL,
-    PRIMARY KEY (uid, pid, b_date),
+    pay_with BIGINT(16),
+    ship_to INTEGER,
+    PRIMARY KEY (uid, pid, amount),
     FOREIGN KEY (uid) REFERENCES Users(uid) ON DELETE CASCADE,
-    FOREIGN KEY (pid) REFERENCES Items(pid) ON DELETE CASCADE );
+    FOREIGN KEY (pid) REFERENCES Items(pid) ON DELETE CASCADE,
+    FOREIGN KEY (uid, pay_with) REFERENCES OwnsCC(uid, card_number) ON DELETE NO ACTION,
+    FOREIGN KEY (ship_to) REFERENCES Addresses(address_id) ON DELETE NO ACTION );
    
 CREATE TABLE IsIn( 
     upc VARCHAR(20),
