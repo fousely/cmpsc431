@@ -393,21 +393,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="100"><strong>Ships To</strong></td>
 					<td class="auto-style6" width="100"><strong>Ships From</strong></td>
 				</tr>';
-		$query = "SELECT T.seller, T.tracking_number, T.date_of_sale, T.paid_with, T.ships_to, T.ships_from FROM Transactions T WHERE T.buyer = \"" . $_SESSION['aid'] .;
+		$query2 = "SELECT T.seller, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2 WHERE T.buyer = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id";
 
-		$rs = mysql_query($query);
+		$rs2 = mysql_query($query2);
 
-		while ($row = mysql_fetch_assoc($rs)) {
+		while ($row2 = mysql_fetch_assoc($rs2)) {
 			echo "<tr>";
-			echo "<td class=\"auto-style5\">" . $row['seller'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row['tracking_number'] . 
-				"<td class=\"auto-style5\">" . $row['date_of_sale'] .
-				"<td class=\"auto-style5\">" . $row['paid_with'] .
-				"<td class=\"auto-style5\">" . $row['ships_to'] .
-				"<td class=\"auto-style5\">" . $row['ships_from'] . "</td><td>";
-
-			echo "</td></tr>";
-
+			echo "<td class=\"auto-style5\">" . $row2['seller'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['tracking_number'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['date_of_sale'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['paid_with'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . $row2['zip_to'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['street_from'] . ", " . $row2['city_from'] . ", " . $row2['state_from'] . $row2['zip_from'] . "</td>";
+			echo "</tr>";
 		}
 		echo "</table><br><br>";
 		
