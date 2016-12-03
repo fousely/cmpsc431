@@ -303,15 +303,15 @@ if (!empty($_SESSION['name']))
 		endAuctions();
 		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, I.bid_end,  
 		B.auction_price2
-	FROM Items I
-	LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
-	ON B.pid = I.pid
-	LEFT JOIN ItemDesc D
-	ON D.upc = I.upc
-	WHERE I.upc = D.upc 
-	AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()) OR 
-		(I.included_in = 1 AND I.list_price > 0))
-	ORDER BY (D.name)";
+		FROM Items I
+		LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
+		ON B.pid = I.pid
+		LEFT JOIN ItemDesc D
+		ON D.upc = I.upc
+		WHERE I.upc = D.upc 
+		AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()) OR 
+			(I.included_in = 1 AND I.list_price > 0))
+		ORDER BY (D.name)";
 
 		$rs = mysql_query($query);
 
