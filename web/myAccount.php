@@ -194,6 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 			rollbackTransaction();
 		}
 	}
+
 }
 
 // Login
@@ -230,6 +231,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 	if (empty($loginErr)) {
 		$_SESSION['aid'] = $_POST["username"];
 		$_SESSION['name'] = $row['full_name'];
+	} else if ($username == "admin") {
+		$query = "SELECT pass FROM Accounts WHERE aid = \"$username\";";
+		$row = mysql_fetch_assoc(mysql_query($query));
+
+		if ($password == $row['pass']) {
+			$_SESSION['aid'] = "admin";
+			$_SESSION['name'] = "admin";
+			goToPage("admin.php");
+			die;
+		}
 	}
 }
 

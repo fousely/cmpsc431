@@ -111,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		    echo "$message<br>";
 		echo '</span>';
 
-	} else {
+	} else if ($_SESSION['aid'] == "admin") {
 		echo "Welcome To Admin Console.<br><br>";
 
 		echo '<p class="auto-style4">All Transactions:</p>
@@ -144,6 +144,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		echo "</table><br><br>";
 		
 		echo '<a href="logout.php">Sign out</a>';
+	} else {
+		echo "You are not authorized to view the admin console.<br>";
+		echo '<a href="myAccount.php">My Account</a>';
+		
 	}
 
 ?>
