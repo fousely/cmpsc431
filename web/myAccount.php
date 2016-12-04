@@ -393,6 +393,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 
 	} else {
 		echo "Welcome back, " . $_SESSION['name'] . "!<br><br>";
+		
+		echo '<a href="addProduct.php">Add a product</a>
+			<br><br><a href="myInfo.php">Your Info</a>
+			<br><br><a href="logout.php">Sign out</a><br><br>';
 
 		echo '<p class="auto-style4">Your Items:</p>
 			<table style="width: 100%">
@@ -559,10 +563,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 			echo "</tr>";
 		}
 		echo "</table><br><br>";
-		
-		echo '<a href="addProduct.php">Add a product</a>
-			<br><br><a href="myInfo.php">Your Info</a>
-			<br><br><a href="logout.php">Sign out</a>';
 	}
 
 ?>

@@ -2,6 +2,14 @@
 session_start();
 
 include 'functions.php';
+
+if (empty($_SESSION['aid'])) {
+	// Not logged in
+	goToPage("myAccount.php");
+	die;
+}
+
+
 $r = getDBConnection();
 
 ?>

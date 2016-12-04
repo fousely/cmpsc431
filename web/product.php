@@ -32,11 +32,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$overallErr = "You cannot bid on/buy your own product.<br>";
 	}
 
-	$query = "SELECT uid FROM Users WHERE uid = \"" . $_SESSION['aid'] . "\";";
-	if (!mysql_fetch_assoc(mysql_query($query))) {
+	$query = "SELECT sid FROM Suppliers WHERE sid = \"" . $_SESSION['aid'] . "\";";
+	if (!empty($_SESSION['aid']) && !mysql_fetch_assoc(mysql_query($query))) {
 		$error = 1;
 		$overallErr = $overallErr . "Suppliers cannot bid on/buy products.<br>";	
 	}
+
+	if (empty($_SESSION['aid'])) {
+		$error = 1;
+		$overallErr = $overallErr . "You must be logged in to bid on/ buy products.<br>";
+	}
+		
 	
 	$commitMessage = array();
 	if ($error == 0 && !empty($_POST['Bid'])) {
