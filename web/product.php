@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 
 	$query = "SELECT sid FROM Suppliers WHERE sid = \"" . $_SESSION['aid'] . "\";";
-	if (!empty($_SESSION['aid']) && !mysql_fetch_assoc(mysql_query($query))) {
+	if (mysql_fetch_assoc(mysql_query($query))) {
 		$error = 1;
 		$overallErr = $overallErr . "Suppliers cannot bid on/buy products.<br>";	
 	}
@@ -67,7 +67,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		// Add to database
 		beginTransaction();
 		$rollback = 0;
-		$commitMessage = array();
 		
 		$query = "INSERT INTO Transactions (category, tracking_number, date_of_sale,
 				seller, buyer, paid_with, ships_to, ships_from) VALUES 
@@ -143,23 +142,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body bgcolor="#CCFFFF">
 
-<p>
-<meta charset="utf-8" />
-<b id="docs-internal-guid-6a6da0ae-035a-24a6-c41b-9923ab67532f" style="font-weight: normal;">
-<a href="index.php"><img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /></a><span class="auto-style1">
-</span><span class="auto-style2">Lil' Bits Computer Hardware</span></b></p>
-<p>&nbsp;</p>
-<table style="width: 100%">
-	<tr>
-		<td style="width: 100px"><a href="index.php">Shop</a></td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td class="auto-style3" style="width: 150px"><a href="myAccount.php">My Account</a></td>
-	</tr>
-</table>
-
 <?php
+
+insertTopOfPage();
 
 if ($pid == False){
 	// No pid parameter in URL -> go to index page
@@ -209,7 +194,7 @@ $state = $row['state'];
 echo "<br><br>" . '<span class="auto-style7">' .
 	"$itemName </span><br>
 	UPC: $upc <br>
-	Sold by <u>$owner</u> from $city, $state <br><br>
+	Sold by " . userMessageLink($owner) . " from $city, $state <br><br>
 	$description <br><br><br>";
 
 if ($includedIn > 1) {
@@ -267,7 +252,7 @@ if ($auctionPrice > 0 && (time() < strtotime($bidEnd) || $isOwner)) {
 	echo '<table style="width: 50%">';
 	while (($count < $NUMBER_OF_BIDS_TO_SHOW || $isOwner) && $row = mysql_fetch_assoc($rs)) {
 		$count = $count + 1;
-		echo "<tr><td>$count)</td><td>" . $row['uid'] . 
+		echo "<tr><td>$count)</td><td>" . userMessageLink($row['uid']) . 
 			':</td><td style="align: center">$' . $row['amount'] . "</td></tr>";
 		
 	}

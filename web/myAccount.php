@@ -282,25 +282,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 </head>
 
 <body bgcolor="#CCFFFF">
-<p>
-<meta charset="utf-8" />
-<b id="docs-internal-guid-6a6da0ae-035a-24a6-c41b-9923ab67532f" style="font-weight: normal;">
-<a href="index.php"><img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /></a><span class="auto-style1">
-</span><span class="auto-style2">Lil' Bits Computer Hardware</span></b></p>
-<p>&nbsp;</p>
-<table style="width: 100%">
-	<tr>
-		<td style="width: 100px"><a href="index.php">Shop</a></td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td class="auto-style3" style="width: 150px"><a href="myAccount.php">My Account</a></td>
-	</tr>
-</table>
-<p>&nbsp;</p>
-
 
 <?php
+	insertTopOfPage();
+
 	// Not logged in
 	if (empty($_SESSION['aid'])) {
 		echo "Please login below or create an account";
@@ -469,7 +454,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 			echo "<tr class=\"auto-style5\">";
 			echo "<td>" . $row2['pid'] . "</td>" .
 				"<td>" . $row2['upc'] . "</td>" .
-				"<td>" . $row2['seller'] . "</td>" .
+				"<td>" . userMessageLink($row2['seller']) . "</td>" .
 				"<td>" . $row2['tracking_number'] . "</td>" .
 				"<td>" . $row2['date_of_sale'] . "</td>" .
 				"<td>" . $row2['paid_with'] . "</td>" .
@@ -554,7 +539,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 			echo "<tr class=\"auto-style5\">";
 			echo "<td>" . $row2['pid'] . "</td>" .
 				"<td>" . $row2['upc'] . "</td>" .
-				"<td>" . $row2['buyer'] . "</td>" .
+				"<td>" . userMessageLink($row2['buyer']) . "</td>" .
 				"<td>" . $row2['tracking_number'] . "</td>" .
 				"<td>" . $row2['date_of_sale'] . "</td>" .
 				"<td>" . $row2['paid_with'] . "</td>" .

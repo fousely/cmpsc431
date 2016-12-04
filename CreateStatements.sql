@@ -143,7 +143,7 @@ CREATE TABLE Rating(
 CREATE TABLE Message( 
     sender VARCHAR(20),
     receiver VARCHAR(20),
-    m_date DATE,
+    m_date TIMESTAMP,
     message VARCHAR(500),
     PRIMARY KEY (sender, receiver, m_date),
     FOREIGN KEY (sender) REFERENCES Accounts(aid) ON DELETE CASCADE,
