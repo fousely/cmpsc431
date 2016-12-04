@@ -476,6 +476,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		echo "</table><br><br>";
 
 
+		echo '<p class="auto-style4">Your Bid History:</p>
+			<table style="width: 100%">
+				<tr>
+					<td class="auto-style6" width="200"><strong>PID</strong></td>
+					<td class="auto-style6" width="200"><strong>Name</strong></td>
+					<td class="auto-style6"><strong>Description</strong></td>
+					<td class="auto-style6" width="100"><strong>Bid</strong></td>
+					<td class="auto-style6" width="100"><strong>Status</strong></td>
+				</tr>';
+		$query = "SELECT I.pid, D.name, D.description, B1.bid, B2.maxBid, I.included_in, T.category
+			FROM ItemDesc D, Items I
+			LEFT JOIN (Select B1.pid, Max(B1.amount) as bid 
+				From Bid B1 WHERE B1.uid = \"" . $_SESSION['aid'] . "\" GROUP BY B1.pid) AS B1
+			ON B1.pid = I.pid
+			LEFT JOIN (Select B2.pid, Max(B2.amount) as maxBid 
+				From Bid B2 GROUP BY B2.pid) AS B2
+			ON B2.pid = I.pid
+			LEFT JOIN (Select T.tid, T.category From Transactions T) AS T
+			ON T.tid = I.included_in
+			WHERE I.upc = D.upc AND B1.bid > 0";
+		$rs = mysql_query($query);
+
+		while ($row = mysql_fetch_assoc($rs)) {
+			echo "<tr class=\"auto-style5\"><td>" . $row['pid'] . "</td>";
+			echo "<td><a href=" . getItemURL($row['pid']) . ">" .
+				$row['name'] . "</td>" .
+				"<td>" . $row['description'] . "</td><td>$" .
+				$row['bid'] . "</td><td>";
+
+			if ($row['included_in'] > 1) {
+				// Item was sold
+				if ($row['category'] == "s") {
+					// Item was bought
+					echo "Item was bought";
+				} else if ($row['bid'] == $row['maxBid']) {
+					echo "Won";
+				} else {
+					echo "Lost";
+				}
+			} else {
+				// Item was not sold yet
+				if ($row['bid'] == $row['maxBid']) {
+					echo "Winning";
+				} else {
+					echo "Losing";
+				}
+			}
+
+			echo "</td></tr>";
+
+		}
+		echo "</table><br><br>";
+
+
 		echo '<p class="auto-style4">Your Sales History:</p>
 			<table style="width: 100%">
 				<tr>
