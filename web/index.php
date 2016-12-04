@@ -296,8 +296,6 @@ if (!empty($_SESSION['name']))
 		<td class="auto-style6"><strong>Description</strong></td>
 		<td class="auto-style6" width="100"><strong>List Price</strong></td>
 		<td class="auto-style6" width="100"><strong>Auction Price</strong></td>
-		<td class="auto-style6" width="100"><strong>Buy Now</strong></td>
-		<td class="auto-style6" width="100"><strong>Bid</strong></td>
 	</tr>
 	<?php 
 		endAuctions();
@@ -338,18 +336,8 @@ if (!empty($_SESSION['name']))
 				else {
 					echo "$" . $row['auction_price2'];
 					}
-			}
-
-			echo "</td><td class=\"auto-style5\">";
-
-			if (!is_null($row['list_price'])) {
-				echo "Buy";
-			}
-
-			echo "</td><td class=\"auto-style5\">";
-
-			if (!is_null($row['auction_price']) && time() < strtotime($row['bid_end'])) {
-				echo "Bid";
+			} else {
+				echo "Auction ended with no winner";
 			}
 
 			echo "</td></tr>";

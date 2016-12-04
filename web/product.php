@@ -1,4 +1,6 @@
 <?php
+$NUMBER_OF_BIDS_TO_SHOW = 5;
+
 session_start();
 include 'functions.php';
 $r = getDBConnection();
@@ -7,6 +9,7 @@ $pid = getURLParameter('pid');
 $query = "SELECT owner_id FROM Owns WHERE pid = \"$pid\";";
 $row = mysql_fetch_assoc(mysql_query($query));
 $owner = $row['owner_id'];
+$isOwner = ($owner == $_SESSION['aid']);
 
 // define variables and set to empty values
 $error = 0;
@@ -24,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$bidErr = "You must bid an amount higher than the current auction price.<br>";
 	}
 
-	if ($owner == $_SESSION['aid']) {
+	if ($isOwner) {
 		$error = 1;
 		$overallErr = "You cannot bid on/buy your own product.<br>";
 	}
@@ -163,10 +166,11 @@ $query = "SELECT * FROM Items WHERE pid = $pid AND
 	included_in = 1;";
 $row = mysql_fetch_assoc(mysql_query($query));
 
-if ($row == False && $owner != $_SESSION['aid']){
+if ($row == False && !$isOwner){
 	// No such item -> go to index page
 	goToPage('index.php');
 } else if ($row == False) {
+	// owner is viewing page -> show all item information
 	$query = "SELECT * FROM Items WHERE pid = $pid;";
 	$row = mysql_fetch_assoc(mysql_query($query));
 }
@@ -178,6 +182,7 @@ $listPrice = $row['list_price'];
 $auctionPrice = $row['auction_price'];
 $bidStart = $row['bid_start'];
 $bidEnd = $row['bid_end'];
+$includedIn = $row['included_in'];
 
 // Get item description and name
 $query = "SELECT * FROM ItemDesc WHERE upc = \"$upc\";";
@@ -186,11 +191,6 @@ $row = mysql_fetch_assoc(mysql_query($query));
 $itemName = $row['name'];
 $description = $row['description'];
 
-// Get owner
-$query = "SELECT * FROM Owns WHERE pid = \"$pid\";";
-$row = mysql_fetch_assoc(mysql_query($query));
-
-$ownerID = $row['owner_id'];
 
 // Get product location
 $query = "SELECT * FROM Addresses WHERE address_id = \"$location\";";
@@ -203,8 +203,14 @@ $state = $row['state'];
 echo "<br><br>" . '<span class="auto-style7">' .
 	"$itemName </span><br>
 	UPC: $upc <br>
-	Sold by <u>$ownerID</u> from $city, $state <br><br>
+	Sold by <u>$owner</u> from $city, $state <br><br>
 	$description <br><br><br>";
+
+if ($includedIn > 1) {
+	// Already sold
+	echo '<span class="auto-style7"><span class="error">' . 
+		"Item sold in transaction $includedIn<br><br></span></span>";
+}
 
 if ($listPrice > 0) {
 	// Product can be bought directly
@@ -218,7 +224,8 @@ if ($listPrice > 0) {
 	echo '<span class="error">' . "$buyErr </span><br><br>";
 }
 
-if ($auctionPrice > 0 && time() < strtotime($bidEnd)) {
+if ($auctionPrice > 0 && (time() < strtotime($bidEnd) || $isOwner)) {
+	echo '<table style="width: 75%"><tr style="vertical-align: top"><td>';
 	// Product is up for auction -> Get highest bid
 	$query = "SELECT MAX(amount) AS amount FROM Bid WHERE pid = \"$pid\";";
 	$row = mysql_fetch_assoc(mysql_query($query));
@@ -242,8 +249,26 @@ if ($auctionPrice > 0 && time() < strtotime($bidEnd)) {
 	addUserCCDropdown($_SESSION['aid'], $creditCard);
 	echo '<br><input type="submit" name="Bid" value="Bid">
 		</form><br>';
-	echo '<span class="error">' . "$bidErr </span><br><br>";
+	echo '<span class="error">' . "$bidErr </span><br><br></td>";
+	echo '<td><span class="auto-style7">Previous Bids:</span><br>';
+
+	$query = "SELECT * FROM Bid WHERE pid = \"$pid\" ORDER BY amount DESC;";
+	$rs = mysql_query($query);
+	$count = 0;
+
+	
+	// Show bids (all if the owner is viewing the page)
+	echo '<table style="width: 50%">';
+	while (($count < $NUMBER_OF_BIDS_TO_SHOW || $isOwner) && $row = mysql_fetch_assoc($rs)) {
+		$count = $count + 1;
+		echo "<tr><td>$count)</td><td>" . $row['uid'] . 
+			':</td><td style="align: center">$' . $row['amount'] . "</td></tr>";
+		
+	}
+	echo "</table></td></tr></table>";
+	
 }
+
 
 echo '<span class="error">' . "$overallErr </span><br>";
 echo '<span class="error">';

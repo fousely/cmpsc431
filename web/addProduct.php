@@ -77,8 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 		$commitMessage = array();
 		
 		if (strcmp($auctionPrice,"NULL") <> 0) {
-			$bidStart = "\"$bidStart\"";
-			$bidEnd = "\"$bidEnd\"";
+			$bidStart = date("Y-m-d H:i:s", strtotime($bidStart));
+			$bidEnd = date("Y-m-d H:i:s", strtotime($bidEnd));
 		}
 		
 		if (strcmp($existingUPC,"none") == 0) {
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 		
 		$query = "INSERT INTO Items (location, upc, list_price, auction_price, reserve_price,
 			bid_start, bid_end, included_in) VALUES ($location, \"$upc\", $listPrice, $auctionPrice,
-			$reservePrice, $bidStart, $bidEnd, 1);";
+			$reservePrice, \"$bidStart\", \"$bidEnd\", 1);";
 		$rs = mysql_query($query);
 		$rollback = checkError($rs, $commitMessage);
 

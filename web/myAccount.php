@@ -397,19 +397,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		echo '<p class="auto-style4">Your Items:</p>
 			<table style="width: 100%">
 				<tr>
+					<td class="auto-style6" width="200"><strong>PID</strong></td>
 					<td class="auto-style6" width="200"><strong>Name</strong></td>
 					<td class="auto-style6"><strong>Description</strong></td>
 					<td class="auto-style6" width="100"><strong>List Price</strong></td>
 					<td class="auto-style6" width="100"><strong>Auction Price</strong></td>
-					<td class="auto-style6" width="100"><strong>Buy Now</strong></td>
-					<td class="auto-style6" width="100"><strong>Bid</strong></td>
 				</tr>';
-		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price FROM Items I, ItemDesc D, Owns O WHERE I.upc = D.upc AND O.owner_id = \"" . $_SESSION['aid'] . "\" AND I.pid = O.pid";
-
+		$query = "SELECT I.pid, D.name, D.description, I.list_price, 
+				 I.auction_price, I.bid_end, B.auction_price2 
+			FROM ItemDesc D, Owns O, Items I
+			LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 
+				From Bid B GROUP BY B.pid) B
+			ON B.pid = I.pid
+			WHERE I.upc = D.upc AND O.owner_id = \"" . $_SESSION['aid'] . "\" AND I.pid = O.pid
+				AND I.included_in = 1";
 		$rs = mysql_query($query);
 
 		while ($row = mysql_fetch_assoc($rs)) {
-			echo "<tr>";
+			echo "<tr><td class=\"auto-style5\">" . $row['pid'] . "</td>";
 			echo "<td class=\"auto-style5\"><a href=" . getItemURL($row['pid']) . ">" .
 				$row['name'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row['description'] . "</td><td>";
@@ -424,20 +429,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 
 			if (is_null($row['auction_price'])) {
 				echo "Buy only";
+			} else if (time() < strtotime($row['bid_end'])) {
+				if ($row['auction_price']>$row['auction_price2']) {
+					echo "$" . $row['auction_price'];
+					}
+				else {
+					echo "$" . $row['auction_price2'];
+					}
 			} else {
-				echo "$" . $row['auction_price'];
-			}
-
-			echo "</td><td class=\"auto-style5\">";
-
-			if (!is_null($row['list_price'])) {
-				echo "Buy";
-			}
-
-			echo "</td><td class=\"auto-style5\">";
-
-			if (!is_null($row['auction_price'])) {
-				echo "Bid";
+				echo "Auction ended with no winner";
 			}
 
 			echo "</td></tr>";
@@ -445,9 +445,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		}
 		echo "</table><br><br>";
 
-		echo '<p class="auto-style4">Your Transactions:</p>
+		echo '<p class="auto-style4">Your Buy History:</p>
 			<table style="width: 100%">
 				<tr>
+					<td class="auto-style6" width="20"><strong>PID</strong></td>
 					<td class="auto-style6" width="50"><strong>Item UPC</strong></td>
 					<td class="auto-style6" width="50"><strong>Seller</strong></td>
 					<td class="auto-style6" width="50"><strong>Tracking</strong></td>
@@ -456,18 +457,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="150"><strong>Ships To</strong></td>
 					<td class="auto-style6" width="150"><strong>Ships From</strong></td>
 				</tr>';
-		$query2 = "SELECT I.upc, T.seller, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.buyer = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
+		$query2 = "SELECT I.pid, I.upc, T.seller, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.buyer = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
 
 		$rs2 = mysql_query($query2);
 
 		while ($row2 = mysql_fetch_assoc($rs2)) {
-			echo "<tr>";
-			echo "<td class=\"auto-style5\">" . $row2['upc'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['seller'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['tracking_number'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['date_of_sale'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['paid_with'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
+			echo "<tr class=\"auto-style5\">";
+			echo "<td>" . $row2['pid'] . "</td>" .
+				"<td>" . $row2['upc'] . "</td>" .
+				"<td>" . $row2['seller'] . "</td>" .
+				"<td>" . $row2['tracking_number'] . "</td>" .
+				"<td>" . $row2['date_of_sale'] . "</td>" .
+				"<td>" . $row2['paid_with'] . "</td>" .
+				"<td>" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['street_from'] . ", " . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td>";
+			echo "</tr>";
+		}
+		echo "</table><br><br>";
+
+
+		echo '<p class="auto-style4">Your Sales History:</p>
+			<table style="width: 100%">
+				<tr>
+					<td class="auto-style6" width="20"><strong>PID</strong></td>
+					<td class="auto-style6" width="50"><strong>Item UPC</strong></td>
+					<td class="auto-style6" width="50"><strong>Buyer</strong></td>
+					<td class="auto-style6" width="50"><strong>Tracking</strong></td>
+					<td class="auto-style6" width="50"><strong>Sale Date</strong></td>
+					<td class="auto-style6" width="50"><strong>Paid With</strong></td>
+					<td class="auto-style6" width="150"><strong>Ships To</strong></td>
+					<td class="auto-style6" width="150"><strong>Ships From</strong></td>
+				</tr>';
+		$query2 = "SELECT I.pid, I.upc, T.buyer, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.seller = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
+
+		$rs2 = mysql_query($query2);
+
+		while ($row2 = mysql_fetch_assoc($rs2)) {
+			echo "<tr class=\"auto-style5\">";
+			echo "<td>" . $row2['pid'] . "</td>" .
+				"<td>" . $row2['upc'] . "</td>" .
+				"<td>" . $row2['buyer'] . "</td>" .
+				"<td>" . $row2['tracking_number'] . "</td>" .
+				"<td>" . $row2['date_of_sale'] . "</td>" .
+				"<td>" . $row2['paid_with'] . "</td>" .
+				"<td>" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row2['street_from'] . ", " . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td>";
 			echo "</tr>";
 		}
