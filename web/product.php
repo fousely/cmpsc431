@@ -144,6 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php
 
+endAuctions();
 insertTopOfPage();
 
 if ($pid == False){
@@ -226,9 +227,9 @@ if ($auctionPrice > 0 && (time() < strtotime($bidEnd) || $isOwner)) {
 	$row = mysql_fetch_assoc(mysql_query($query));
 	$bidCount = $row['count'];
 	echo '<span class="auto-style7">Current auction price: $' . 
-		max($maxBid, $auctionPrice) . "<br>
+		max($maxBid, $auctionPrice) . "</span> <a href=\"product.php?pid=$pid\">Refresh</a><br>
 		Number of bids: $bidCount <br>
-		Auction ends at $bidEnd </span><br>";
+		Auction ends at $bidEnd <br>";
 	countdownTimer($bidEnd, "Auction has ended");
 	
 	// Bid form

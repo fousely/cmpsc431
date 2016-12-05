@@ -141,6 +141,168 @@ function addStatesDropdown($selected) {
 	echo '</select>';
 }
 
+function getCategoriesArrayPart($start, $count) {
+	$categories = array(
+		"Accessories" => 0,
+		"Computer Case" => 0,
+		"CPU" => 0,
+		"GPU" => 0,
+		"Motherboards" => 0,
+		"AMD Motherboards" => 5,
+		"Intel Motherboards" => 5,
+		"Power Supply" => 0, 
+		"+800W Power Supply" => 8,
+		"400W-800W" => 8,
+		"Storage" => 0,
+		"HDD" => 11,
+		"2.5 in. HDD" => 12,
+		"3.5 in. HDD" => 12,
+		"SSD" => 11,
+		"2.5 in. SSD" => 16,
+		"RAM" => 0,
+		"DDR3" => 17,
+		"DDR3 4GB" => 18,
+		"DDR3 4GB Stick" => 19,
+		"DDR3 8GB" => 18,
+		"DDR3 8GB Stick" => 21,
+		"DDR3 16GB" => 18,
+		"DDR3 16GB Stick" => 23,
+		"DDR3 2x8GB Sticks" => 23, 
+		"DDR3 4x4GB Sticks" => 23,
+		"DDR3 32GB" => 18, 
+		"DDR3 32GB Stick" => 27,
+		"DDR3 2x16GB Sticks" => 27, 
+		"DDR3 4x8GB Sticks" => 27,
+		"DDR4" => 17,
+		"DDR4 4GB" => 31,
+		"DDR4 4GB Stick" => 32,
+		"DDR4 8GB" => 31,
+		"DDR4 8GB Stick" => 34,
+		"DDR4 16GB" => 31,
+		"DDR4 16GB Stick" => 36,
+		"DDR4 2x8GB Sticks" => 36, 
+		"DDR4 4x4GB Sticks" => 36,
+		"DDR4 32GB" => 31, 
+		"DDR4 32GB Stick" => 40,
+		"DDR4 2x16GB Sticks" => 40, 
+		"DDR4 4x8GB Sticks" => 40
+	 );
+
+	if ($count == 0) {
+		return array_slice($categories, $start, NULL, True);
+	} else {
+		return array_slice($categories, $start, $count, True);
+	}
+}
+
+
+function getCategoriesDepth($name) {
+	$categoriesDepth = array(
+		"Accessories" => 0,
+		"Computer Case" => 0,
+		"CPU" => 0,
+		"GPU" => 0,
+		"Motherboards" => 0,
+		"AMD Motherboards" => 1,
+		"Intel Motherboards" => 1,
+		"Power Supply" => 0, 
+		"+800W Power Supply" => 1,
+		"400W-800W" => 1,
+		"Storage" => 0,
+		"HDD" => 1,
+		"2.5 in. HDD" => 2,
+		"3.5 in. HDD" => 2,
+		"SSD" => 1,
+		"2.5 in. SSD" => 2,
+		"RAM" => 0,
+		"DDR3" => 1,
+		"DDR3 4GB" => 2,
+		"DDR3 4GB Stick" => 3,
+		"DDR3 8GB" => 2,
+		"DDR3 8GB Stick" => 3,
+		"DDR3 16GB" => 2,
+		"DDR3 16GB Stick" => 3,
+		"DDR3 2x8GB Sticks" => 3, 
+		"DDR3 4x4GB Sticks" => 3,
+		"DDR3 32GB" => 2, 
+		"DDR3 32GB Stick" => 3,
+		"DDR3 2x16GB Sticks" => 3, 
+		"DDR3 4x8GB Sticks" => 3,
+		"DDR4" => 1,
+		"DDR4 4GB" => 2,
+		"DDR4 4GB Stick" => 3,
+		"DDR4 8GB" => 2,
+		"DDR4 8GB Stick" => 3,
+		"DDR4 16GB" => 2,
+		"DDR4 16GB Stick" => 3,
+		"DDR4 2x8GB Sticks" => 3, 
+		"DDR4 4x4GB Sticks" => 3,
+		"DDR4 32GB" => 2, 
+		"DDR4 32GB Stick" => 3,
+		"DDR4 2x16GB Sticks" => 3, 
+		"DDR4 4x8GB Sticks" => 3
+	 );
+
+	if (array_key_exists($name, $categoriesDepth)){ 
+		return $categoriesDepth[$name];
+	} else {
+		return -1;
+	}
+}
+
+function insertSpaces($number) {
+	for ($count = 0; $count < $number; $count = $count + 1) {
+		echo "&nbsp";
+	}
+}
+
+function getCategoryNameFromArray($arrayNum) {
+	if ($arrayNum != 0) {
+		$cat = getCategoriesArrayPart($arrayNum - 1, 1);
+		return key($cat);
+	} else {
+		return "All";
+	}
+}
+
+function getCategoryValueFromArray($name) {
+	$categories = getCategoriesArrayPart(0,0);
+	if (array_key_exists($name, $categories)){ 
+		return $categories[$name];
+	} else {
+		return -1;
+	}
+}
+
+function getCategoryTreeWalk($name) {
+	$walk = array($name);
+	$curCat = $name;
+
+	while (($val = getCategoryValueFromArray($curCat)) != -1) {
+		$curCat = getCategoryNameFromArray($val);
+		$walk[] = $curCat;
+	}
+
+	return $walk;
+}
+
+function addCategoriesDropdown($selected) {
+	$categories = getCategoriesArrayPart(0,0);
+
+	echo '<select name="category">';
+	echo '<option value=-1> Choose category </option>';
+	foreach ($categories as $category => $value) {
+		echo '<option value="' . $category . '"';
+		if (!empty($selected) && strcmp($selected, $category) == 0) {
+			echo ' selected="selected"';
+		}
+		echo '>';
+		insertSpaces(getCategoriesDepth($category) * 2);
+		echo $category . '</option>';
+	}
+	echo '</select>';
+}
+
 function addUserCCDropdown($pid, $selectedCC) {
 	$query = 'SELECT * FROM CreditCards C, OwnsCC O WHERE O.uid = "' . $pid . '" 
 			AND O.card_number = C.card_number;';

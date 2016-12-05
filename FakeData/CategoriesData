@@ -1,12 +1,5 @@
 +800W Power Supply	Power supplies that supply over 800W
-16GB Stick	One 16GB stick of RAM
-2x16GB Sticks	Two 16GB sticks of RAM
-2X8GB Sticks	Two 8GB sticks of RAM
 400W-800W	Power supply that supplies over 400w but under 800W
-4GB Stick	One 4GB stick of RAM
-4X8GB Sticks	Four 8GB sticks of RAM
-4X4GB Sticks	Four 4GB sticks of RAM
-8GB Stick	One 8GB stick of RAM
 Accessories	Other computer paraphernalia
 All	Holds all categories 
 AMD Motherboards	AMD compatable Motherboard
@@ -14,19 +7,38 @@ Computer Case	The case that the fully built computer goes into
 CPU	Central Processing Unit
 DDR3	Type of RAM
 DDR4	Type of RAM newer than DDR3
-3.5" HDD	3.5 HDD Storage Device
+3.5 in. HDD	3.5 HDD Storage Device
 GPU	Graphics Processing Unit
 HDD	Mechanical Drive
 Intel Motherboards	Intel CPU compatible motherboards
-2.5" SSD	2.5 SSD Storage Device
-2.5" HDD	2.5 HDD Storage Device
+2.5 in. SSD	2.5 SSD Storage Device
+2.5 in. HDD	2.5 HDD Storage Device
 Motherboards	Motherboard
 Power Supply	Supplies power to the motherboard and other components
 Storage	Storage for files
 RAM	Random Access Memory
 SSD	Solid State Drive
-4GB	4GB of RAM
-8GB	8GB of RAM
-16GB	16GB of RAM
-32GB	32GB of RAM
-32GB Stick	32GB stick of RAM
+DDR3 4GB	4GB of DDR3 RAM
+DDR3 8GB	8GB of DDR3 RAM
+DDR3 16GB	16GB of DDR3 RAM
+DDR3 32GB	32GB of DDR3 RAM
+DDR3 4GB Stick	One 4GB stick of DDR3 RAM
+DDR3 8GB Stick	One 8GB stick of DDR3 RAM
+DDR3 16GB Stick	One 16GB stick of DDR3 RAM
+DDR3 2X8GB Sticks	Two 8GB sticks of DDR3 RAM
+DDR3 4X4GB Sticks	Four 4GB sticks of DDR3 RAM
+DDR3 32GB Stick	32GB stick of DDR3 RAM
+DDR3 2x16GB Sticks	Two 16GB sticks of DDR3 RAM
+DDR3 4X8GB Sticks	Four 8GB sticks of DDR3 RAM
+DDR4 4GB	4GB of DDR4 RAM
+DDR4 8GB	8GB of DDR4 RAM
+DDR4 16GB	16GB of DDR4 RAM
+DDR4 32GB	32GB of DDR4 RAM
+DDR4 4GB Stick	One 4GB stick of DDR4 RAM
+DDR4 8GB Stick	One 8GB stick of DDR4 RAM
+DDR4 16GB Stick	One 16GB stick of DDR4 RAM
+DDR4 2X8GB Sticks	Two 8GB sticks of DDR4 RAM
+DDR4 4X4GB Sticks	Four 4GB sticks of DDR4 RAM
+DDR4 32GB Stick	32GB stick of DDR4 RAM
+DDR4 2x16GB Sticks	Two 16GB sticks of DDR4 RAM
+DDR4 4X8GB Sticks	Four 8GB sticks of DDR4 RAM

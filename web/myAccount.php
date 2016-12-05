@@ -377,6 +377,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		echo '</span>';
 
 	} else {
+		endAuctions();
 		echo "Welcome back, " . $_SESSION['name'] . "!<br><br>";
 		
 		echo '<a href="addProduct.php">Add a product</a>
