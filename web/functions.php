@@ -38,6 +38,15 @@ function getItemURL($pid) {
 	return getPageURL("product.php") . "?pid=$pid";
 }
 
+function itemLink($pid) {
+	return '<a href="' . getPageURL("product.php") . "?pid=$pid"  . '">' . $pid . '</a>';
+}
+
+function userMessageLink($aid) {
+	return '<a href="' . getPageURL("sendMessage.php") . "?sendTo=$aid"  . '">' . $aid . '</a>';
+}
+
+
 function countdownTimer($date, $endMessage) {
 	echo '<script language="JavaScript">
 		TargetDate = "' . $date . '";
@@ -80,6 +89,26 @@ function checkError(&$rs, &$commitErr) {
 	return sizeof($commitErr);
 }
 
+function insertTopOfPage() {
+	echo '<p>
+	<meta charset="utf-8" />
+	<b id="docs-internal-guid-6a6da0ae-035a-24a6-c41b-9923ab67532f" style="font-weight: normal;">
+	<a href="index.php"><img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /></a><span class="auto-style1">
+	</span><span class="auto-style2">Lil\' Bits Computer Hardware</span></b></p>
+	<p>&nbsp;</p>
+	<table style="width: 100%">
+		<tr>
+			<td style="width: 100px"><a href="index.php">Shop</a></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td class="auto-style3" style="width: 150px"><a href="messages.php">My Messages</a></td>
+			<td class="auto-style3" style="width: 150px"><a href="myAccount.php">My Account</a></td>
+		</tr>
+	</table>
+	<p>&nbsp;</p>';
+}
+
 function addStatesDropdown($selected) {
 	$states = array(
 		"AL" => "Alabama", "AK" => "Alaska", "AZ" => "Arizona", 
@@ -109,6 +138,45 @@ function addStatesDropdown($selected) {
 		}
 		echo '>' . $name . '</option>';
 	}
+	echo '</select>';
+}
+
+function addUserCCDropdown($pid, $selectedCC) {
+	$query = 'SELECT * FROM CreditCards C, OwnsCC O WHERE O.uid = "' . $pid . '" 
+			AND O.card_number = C.card_number;';
+	$rs = mysql_query($query);
+
+	echo '<select name="creditCard">';
+
+	while($row = mysql_fetch_assoc($rs)) {
+		echo '<option value="' . $row['card_number'] . '"';
+		if ($selectedCC == $row['card_number']) {
+			echo ' selected="selected"';
+		}
+		echo '>' . $row['card_number'] . ', Exp: ' . 
+			date("m/y", strtotime($row['expiration'])) . '</option>';
+	}
+
+	echo '</select>';
+}
+
+
+function addUserAddressesDropDown($pid, $selectedLocation) {
+	$query = 'SELECT * FROM Addresses A, HasAddress H WHERE H.aid = "' . $pid . '" 
+			AND A.address_id = H.address_id;';
+	$rs = mysql_query($query);
+
+	echo '<select name="location">';
+
+	while($row = mysql_fetch_assoc($rs)) {
+		echo '<option value="' . $row['address_id'] . '"';
+		if ($selectedLocation == $row['address_id']) {
+			echo ' selected="selected"';
+		}
+		echo '>' . $row['street'] . ', ' . $row['city'] . ", " . $row['state'] . 
+			" " . $row['zip'] . '</option>';
+	}
+
 	echo '</select>';
 }
 

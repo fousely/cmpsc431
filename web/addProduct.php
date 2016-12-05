@@ -2,6 +2,11 @@
 session_start();
 
 include 'functions.php';
+if (empty($_SESSION['aid'])) {
+	// Not logged in
+	goToPage("myAccount.php");
+	die;
+}
 $r = getDBConnection();
 
 
@@ -77,8 +82,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 		$commitMessage = array();
 		
 		if (strcmp($auctionPrice,"NULL") <> 0) {
-			$bidStart = "\"$bidStart\"";
-			$bidEnd = "\"$bidEnd\"";
+			$bidStart = date("Y-m-d H:i:s", strtotime($bidStart));
+			$bidEnd = date("Y-m-d H:i:s", strtotime($bidEnd));
 		}
 		
 		if (strcmp($existingUPC,"none") == 0) {
@@ -93,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 		
 		$query = "INSERT INTO Items (location, upc, list_price, auction_price, reserve_price,
 			bid_start, bid_end, included_in) VALUES ($location, \"$upc\", $listPrice, $auctionPrice,
-			$reservePrice, $bidStart, $bidEnd, 1);";
+			$reservePrice, \"$bidStart\", \"$bidEnd\", 1);";
 		$rs = mysql_query($query);
 		$rollback = checkError($rs, $commitMessage);
 
@@ -159,25 +164,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 </head>
 
 <body bgcolor="#CCFFFF">
-<p>
-<meta charset="utf-8" />
-<b id="docs-internal-guid-6a6da0ae-035a-24a6-c41b-9923ab67532f" style="font-weight: normal;">
-<a href="index.php"><img height="75" src="Pk7WXlrPofElIk0cA-XDTvkxe-b_tX0wCZUbj6x34tUhzOsDjoQ5zDS6mEE8TRWQchg3y-oXdIN3e4UMZ80W9VRf-J0WM0mUe8G4Jh5Dy2FkOjKIwx5ZXQPG7aDmLIUk7HNrw1S2Lco.png" width="75" /></a><span class="auto-style1">
-</span><span class="auto-style2">Lil' Bits Computer Hardware</span></b></p>
-<p>&nbsp;</p>
-<table style="width: 100%">
-	<tr>
-		<td style="width: 100px"><a href="index.php">Shop</a></td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td class="auto-style3" style="width: 150px"><a href="myAccount.php">My Account</a></td>
-	</tr>
-</table>
-<p>&nbsp;</p>
 
 
 <?php 
+	insertTopOfPage();
 	echo "Please fill out product information<br><br>";
 	echo '	<form action="addProduct.php" method="post">
 		Either choose an existing product UPC:<br>
@@ -189,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	while($row = mysql_fetch_assoc($rs)) {
 		echo '<option value="' . $row['upc'] . '"';
 		if ($upc == $row['upc']) {
-			echo ' selected="selected';
+			echo ' selected="selected"';
 		}
 		echo '>' . $row['name'] . '</option>';	
 	}
@@ -203,21 +193,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	echo $desc . '"> <span class="error">*<br>';
 	echo "$newProductErr <br> $existingUPCErr" . '</span><br><br>
 
-		Location: <select name="location">';
+		Location:';
 
-	$query = 'SELECT * FROM Addresses A, HasAddress H WHERE H.aid = "' . $_SESSION["aid"] . '" 
-			AND A.address_id = H.address_id;';
-	$rs = mysql_query($query);
-	echo $rs;
-	while($row = mysql_fetch_assoc($rs)) {
-		echo '<option value="' . $row['address_id'] . '"';
-		if ($location == $row['address_id']) {
-			echo ' selected="selected"';
-		}
-		echo '>' . $row['street'] . ', ' . $row['city'] . ", " . $row['state'] . 
-			" " . $row['zip'] . '</option>';
-	}
-	echo '</select><br><br>
+	addUserAddressesDropDown($_SESSION["aid"], $location);
+
+	echo '<br><br>
 
 		If the item is up for direct buy, enter a list price. Otherwise leave it blank.<br>
 		List Price: <input type="number" name="listPrice" min="1" step="0.01" value = "';
