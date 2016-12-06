@@ -4,8 +4,11 @@ session_start();
 $r = getDBConnection();
 
 $extraQueryConditions = "";
-$search = getURLParameter('search');
+$minPrice = $maxPrice = $search = $category = "";
+$search = filter_input(INPUT_GET, 'search');
 $category = getURLParameter('category');
+$minPrice = getURLParameter('minPrice');
+$maxPrice = getURLParameter('maxPrice');
 
 if (!empty($search)) {
 	// Add search terms
@@ -21,7 +24,32 @@ if (!empty($category) && $category != -1) {
 	$categoryConstraints = "AND N.category = \"$category\" ";
 
 	$extraQueryConditions = $extraQueryConditions . $categoryConstraints;
-	$categoryMessage = " in category $category";
+	$categoryMessage = " in category \"$category\"";
+}
+
+if (!empty($minPrice)) {
+	// Add min price restraints
+	$minPriceRestraint = "AND ((I.auction_price >= \"$minPrice\" AND 
+					I.bid_end > NOW() AND I.bid_start <= NOW()) 
+				OR I.list_price >= \"$minPrice\") ";
+
+	$extraQueryConditions = $extraQueryConditions . $minPriceRestraint;
+	$priceMessage = " with price greater than \$$minPrice";
+}
+
+if (!empty($maxPrice)) {
+	// Add max price restraints
+	$maxPriceRestraint = "AND ((I.auction_price <= \"$maxPrice\" AND I.auction_price != \"NULL\"
+					AND I.bid_end > NOW() AND I.bid_start <= NOW()) 
+				OR (I.list_price <= \"$maxPrice\" AND I.list_price != \"NULL\")) ";
+
+	$extraQueryConditions = $extraQueryConditions . $maxPriceRestraint;
+
+	if (!empty($minPrice)) {
+		$priceMessage = $priceMessage . " but less than \$$maxPrice";
+	} else {
+		$priceMessage = " with price less than \$$maxPrice";
+	}
 }
 
 ?>
@@ -297,12 +325,14 @@ if (!empty($_SESSION['name'])) {
 
 
 echo '<p>&nbsp;</p><p><form method="get"><div class="row">';
-echo 'Search: <input type="text" name="search" style="width:75%" value="' . $search . '">';
+echo 'Search: <input type="text" name="search" style="width:50%" value="' . $search . '">  ';
+echo 'Min Price: <input type="number" name="minPrice" min="1" style="width:5%" value="' . $minPrice . '">  
+	Max Price: <input type="number" name="maxPrice" min="1" style="width:5%" value="' . $maxPrice . '">  ';
 addCategoriesDropdown($category);
 echo '<button type="submit">Search</button></div></form></p>';
 
 echo'<p>&nbsp;</p>
-	<p class="auto-style4">' . "All Items$searchMessage$categoryMessage:" . '</p>';
+	<p class="auto-style4">' . "All Items$searchMessage$categoryMessage$priceMessage:" . '</p>';
 
 echo '<table style="width: 100%">
 		<tr>
@@ -361,7 +391,7 @@ while ($row = mysql_fetch_assoc($rs)) {
 }
 
 if ($count == 0) {
-	echo '<tr><td>No such items found</td></tr>';
+	echo '<tr><td>No items found</td></tr>';
 }
 
 ?>
