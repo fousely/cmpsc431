@@ -38,6 +38,11 @@ function getItemURL($pid) {
 	return getPageURL("product.php") . "?pid=$pid";
 }
 
+function getSearchLink($searchTerms, $linkText) {
+	$searchTerms = urlencode($searchTerms);
+	return '<a href="' . getPageURL("index.php") . "?search=$searchTerms\">" . $linkText . '</a>';
+}
+
 function itemLink($pid) {
 	return '<a href="' . getPageURL("product.php") . "?pid=$pid"  . '">' . $pid . '</a>';
 }
@@ -102,6 +107,7 @@ function insertTopOfPage() {
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>
+			<td class="auto-style3" style="width: 150px"><a href="wishlist.php">My Wishlist</a></td>
 			<td class="auto-style3" style="width: 150px"><a href="messages.php">My Messages</a></td>
 			<td class="auto-style3" style="width: 150px"><a href="myAccount.php">My Account</a></td>
 		</tr>

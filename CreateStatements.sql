@@ -158,11 +158,11 @@ CREATE TABLE HasInCart(
     
 CREATE TABLE Wishes( 
     uid VARCHAR(20),
-    pid INTEGER,
+    upc VARCHAR(20),
     w_date DATE,
-    PRIMARY KEY (uid, pid),
+    PRIMARY KEY (uid, upc),
     FOREIGN KEY (uid) REFERENCES Users(uid) ON DELETE CASCADE,
-    FOREIGN KEY (pid) REFERENCES Items(pid) ON DELETE CASCADE );
+    FOREIGN KEY (upc) REFERENCES ItemDesc(upc) ON DELETE CASCADE);
 
 CREATE TABLE Bid( 
     uid VARCHAR(20),

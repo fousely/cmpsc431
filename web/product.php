@@ -206,6 +206,13 @@ if ($userRating == -1) {
 
 echo "<br><br>$description <br><br><br>";
 
+// Show add to wishlist button
+if (!empty($_SESSION['aid'])) {
+	echo '<form method="post" action="wishlist.php"><button type="submit" value="' . 
+		$upc . '" name="addToWishlist">Add to Wishlist</button></form><br><br>';
+}
+
+
 if ($includedIn > 1) {
 	// Already sold
 
@@ -227,13 +234,16 @@ if ($includedIn > 1) {
 if ($listPrice > 0) {
 	// Product can be bought directly
 	echo '<span class="auto-style7">Buy now price: $' . $listPrice ;
-	echo '</span><form method="post">Ship to: ';
-	addUserAddressesDropDown($_SESSION['aid'], $location);
-	echo "<br>Buy with: ";
-	addUserCCDropdown($_SESSION['aid'], $creditCard);
-	echo '<br><input type="submit" name="Buy" value="Buy">
-		</form><br>';
-	echo '<span class="error">' . "$buyErr </span><br><br>";
+	if (!empty($_SESSION['aid'])) {
+		echo '</span><form method="post">Ship to: ';
+		addUserAddressesDropDown($_SESSION['aid'], $location);
+		echo "<br>Buy with: ";
+		addUserCCDropdown($_SESSION['aid'], $creditCard);
+		echo '<br><input type="submit" name="Buy" value="Buy">
+			</form><br>';
+		echo '<span class="error">' . "$buyErr </span>";
+	}
+	echo '<br><br>';
 }
 
 if ($auctionPrice > 0 && (time() < strtotime($bidEnd) || $isOwner)) {
@@ -253,15 +263,19 @@ if ($auctionPrice > 0 && (time() < strtotime($bidEnd) || $isOwner)) {
 	countdownTimer($bidEnd, "Auction has ended");
 	
 	// Bid form
-	echo '<form method="post">
-		Bid: <input type="number" name="amount" min="' . 
-		max($maxBid + 1, $auctionPrice) . '" step="1"><br>Ship to: ';
-	addUserAddressesDropDown($_SESSION['aid'], $location);
-	echo "<br>Buy with: ";
-	addUserCCDropdown($_SESSION['aid'], $creditCard);
-	echo '<br><input type="submit" name="Bid" value="Bid">
-		</form><br>';
-	echo '<span class="error">' . "$bidErr </span><br><br></td>";
+	if (!empty($_SESSION['aid'])) {
+		echo '<form method="post">
+			Bid: <input type="number" name="amount" min="' . 
+			max($maxBid + 1, $auctionPrice) . '" step="1"><br>Ship to: ';
+		addUserAddressesDropDown($_SESSION['aid'], $location);
+		echo "<br>Buy with: ";
+		addUserCCDropdown($_SESSION['aid'], $creditCard);
+		echo '<br><input type="submit" name="Bid" value="Bid">
+			</form><br>';
+		echo '<span class="error">' . "$bidErr </span>";
+	}
+	
+	echo "<br><br></td>";
 	echo '<td><span class="auto-style7">Previous Bids:</span><br>';
 
 	$query = "SELECT * FROM Bid WHERE pid = \"$pid\" ORDER BY amount DESC;";
