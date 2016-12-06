@@ -419,4 +419,53 @@ function endAuctions() {
 	}
 }
 
+
+function getItemRating($upc) {
+	$query = 'SELECT AVG(stars) as rating FROM RateItem WHERE upc = "' . $upc . '";';
+	$rs = mysql_query($query);
+
+	$row = mysql_fetch_assoc($rs);
+
+	if (!empty($row['rating'])) {
+		return $row['rating'];
+	} else {
+		return -1;
+	}
+}
+
+
+function getUserRating($aid) {
+	$query = 'SELECT AVG(stars) as rating FROM Rating WHERE ratee = "' . $aid . '";';
+	$rs = mysql_query($query);
+
+	$row = mysql_fetch_assoc($rs);
+
+	if (!empty($row['rating'])) {
+		return $row['rating'];
+	} else {
+		return -1;
+	}
+}
+
+function hasRatedItem($aid, $upc) {
+	$query = 'SELECT * FROM RateItem WHERE upc = "' . $upc . '" AND rater = "' . $aid . '";';
+
+	if (mysql_fetch_assoc(mysql_query($query))) {
+		return True;
+	} else {
+		return False;
+	}
+}
+
+
+function hasRatedUser($aid, $ratee) {
+	$query = 'SELECT * FROM Rating WHERE ratee = "' . $ratee . '" AND rater = "' . $aid . '";';
+
+	if (mysql_fetch_assoc(mysql_query($query))) {
+		return True;
+	} else {
+		return False;
+	}
+}
+
 ?>

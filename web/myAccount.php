@@ -444,8 +444,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="50"><strong>Tracking</strong></td>
 					<td class="auto-style6" width="50"><strong>Sale Date</strong></td>
 					<td class="auto-style6" width="50"><strong>Paid With</strong></td>
-					<td class="auto-style6" width="150"><strong>Ships To</strong></td>
-					<td class="auto-style6" width="150"><strong>Ships From</strong></td>
+					<td class="auto-style6" width="200"><strong>Ships To</strong></td>
+					<td class="auto-style6" width="200"><strong>Ships From</strong></td>
+					<td class="auto-style6" width="100"><strong>Rate Item</strong></td>
+					<td class="auto-style6" width="100"><strong>Rate Seller</strong></td>
 				</tr>';
 		$query2 = "SELECT I.pid, I.upc, T.seller, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.buyer = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
 
@@ -459,20 +461,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 				"<td>" . $row2['tracking_number'] . "</td>" .
 				"<td>" . $row2['date_of_sale'] . "</td>" .
 				"<td>" . $row2['paid_with'] . "</td>" .
-				"<td>" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['street_from'] . ", " . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td>";
-			echo "</tr>";
+				"<td>" . $row2['street_to'] . "<br>" . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['street_from'] . "<br>" . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td><td>";
+
+			if (hasRatedItem($_SESSION['aid'], $row2['upc'])) {
+				echo 'Already rated item';
+			} else {
+				echo '<form method="post" action="rating.php"><button type="submit" value="' . 
+					$row2['upc'] . '" name="startItemRating">Rate Item</button></form>';
+			}
+
+			echo "<td>";
+
+			if (hasRatedUser($_SESSION['aid'], $row2['seller'])) {
+				echo 'Already rated seller';
+			} else {
+				echo '<form method="post" action="rating.php"><button type="submit" value="' . 
+					$row2['seller'] . '" name="startUserRating">Rate Seller</button></form>';
+			}
+
+			echo "</td></tr>";
 		}
 		echo "</table><br><br>";
 
 
 		echo '<p class="auto-style4">Your Bid History:</p>
-			<table style="width: 100%">
+			<table>
 				<tr>
-					<td class="auto-style6" width="200"><strong>PID</strong></td>
+					<td class="auto-style6" width="50"><strong>PID</strong></td>
 					<td class="auto-style6" width="200"><strong>Name</strong></td>
 					<td class="auto-style6"><strong>Description</strong></td>
-					<td class="auto-style6" width="100"><strong>Bid</strong></td>
+					<td class="auto-style6" width="75"><strong>Bid</strong></td>
 					<td class="auto-style6" width="100"><strong>Status</strong></td>
 				</tr>';
 		$query = "SELECT I.pid, D.name, D.description, B1.bid, B2.maxBid, I.included_in, T.category
@@ -490,8 +509,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 
 		while ($row = mysql_fetch_assoc($rs)) {
 			echo "<tr class=\"auto-style5\"><td>" . $row['pid'] . "</td>";
-			echo "<td><a href=" . getItemURL($row['pid']) . ">" .
-				$row['name'] . "</td>" .
+			echo "<td><a href=\"" . getItemURL($row['pid']) . "\">" .
+				$row['name'] . "</a></td>" .
 				"<td>" . $row['description'] . "</td><td>$" .
 				$row['bid'] . "</td><td>";
 
@@ -526,26 +545,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="20"><strong>PID</strong></td>
 					<td class="auto-style6" width="50"><strong>Item UPC</strong></td>
 					<td class="auto-style6" width="50"><strong>Buyer</strong></td>
-					<td class="auto-style6" width="50"><strong>Tracking</strong></td>
-					<td class="auto-style6" width="50"><strong>Sale Date</strong></td>
-					<td class="auto-style6" width="50"><strong>Paid With</strong></td>
-					<td class="auto-style6" width="150"><strong>Ships To</strong></td>
-					<td class="auto-style6" width="150"><strong>Ships From</strong></td>
+					<td class="auto-style6" width="150"><strong>Tracking</strong></td>
+					<td class="auto-style6" width="100"><strong>Sale Date</strong></td>
+					<td class="auto-style6" width="100"><strong>Sale Type</strong></td>
+					<td class="auto-style6" width="100"><strong>Paid With</strong></td>
+					<td class="auto-style6" width="200"><strong>Ships To</strong></td>
+					<td class="auto-style6" width="200"><strong>Ships From</strong></td>
 				</tr>';
-		$query2 = "SELECT I.pid, I.upc, T.buyer, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.seller = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
+		$query2 = "SELECT I.pid, I.upc, T.buyer, T.category, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.seller = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
 
 		$rs2 = mysql_query($query2);
 
 		while ($row2 = mysql_fetch_assoc($rs2)) {
 			echo "<tr class=\"auto-style5\">";
 			echo "<td>" . $row2['pid'] . "</td>" .
-				"<td>" . $row2['upc'] . "</td>" .
+				"<td><a href=\"" . getItemURL($row2['pid']) . "\">" . $row2['upc'] . "</a></td>" .
 				"<td>" . userMessageLink($row2['buyer']) . "</td>" .
 				"<td>" . $row2['tracking_number'] . "</td>" .
-				"<td>" . $row2['date_of_sale'] . "</td>" .
-				"<td>" . $row2['paid_with'] . "</td>" .
-				"<td>" . $row2['street_to'] . ", " . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row2['street_from'] . ", " . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td>";
+				"<td>" . $row2['date_of_sale'] . "</td><td>";
+
+			if ($row2['category'] == "b") {
+				echo "Auction";
+			} else {
+				echo "Sale";
+			}
+
+			echo "</td><td>" . $row2['paid_with'] . "</td>" .
+				"<td>" . $row2['street_to'] . "<br>" . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
+				"<td class=\"auto-style5\">" . $row2['street_from'] . "<br>" . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td>";
 			echo "</tr>";
 		}
 		echo "</table><br><br>";
