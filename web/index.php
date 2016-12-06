@@ -2,6 +2,27 @@
 include 'functions.php';
 session_start();
 $r = getDBConnection();
+
+$extraQueryConditions = "";
+$search = getURLParameter('search');
+$cat = getURLParameter('cat');
+
+if (!empty($search)) {
+	// Add search terms
+	$extraQueryConditions = "AND (D.name LIKE '%$search%' OR D.description LIKE '%$search%')";
+	$searchMessage = " matching '$search'";
+}
+
+if (!empty($cat)) {
+	// Add category restraints
+	$categoryConstraints = "";
+
+	// Loop using the getCategoryTreeWalk function from function.php
+
+	$extraQueryConditions = $extraQueryConditions . $categoryConstraints;
+	$categoryMessage = " in category $lowestCategory";
+}
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -268,68 +289,74 @@ window.onload=Delay;
 
 <?php
 insertTopOfPage();
-if (!empty($_SESSION['name']))
+if (!empty($_SESSION['name'])) {
 	echo "<br>Hello, " . $_SESSION['name']. "!";
+}
+
+
+
+echo '<p>&nbsp;</p><p><form method="get"><div class="row">';
+echo 'Search: <input type="text" name="search" style="width:85%">
+	<button type="submit">Search</button></div></form></p>';
+
+echo'<p>&nbsp;</p>
+	<p class="auto-style4">' . "All Items$searchMessage$categoryMessage:" . '</p>';
+
+echo '<table style="width: 100%">
+		<tr>
+			<td class="auto-style6" width="200"><strong>Name</strong></td>
+			<td class="auto-style6"><strong>Description</strong></td>
+			<td class="auto-style6" width="100"><strong>List Price</strong></td>
+			<td class="auto-style6" width="100"><strong>Auction Price</strong></td>
+		</tr>';
+
+endAuctions();
+$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, I.bid_end,  
+	B.auction_price2
+	FROM IsIn N, Items I
+	LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
+	ON B.pid = I.pid
+	LEFT JOIN ItemDesc D
+	ON D.upc = I.upc
+	WHERE I.upc = D.upc 
+	AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()) OR I.list_price > 0)
+	AND I.included_in = 1 AND I.upc = N.upc $extraQueryConditions
+	ORDER BY (D.name)";
+
+$rs = mysql_query($query);
+
+while ($row = mysql_fetch_assoc($rs)) {
+	echo "<tr>";
+	echo "<td class=\"auto-style5\"><a href=" . getItemURL($row['pid']) . ">" . 
+		$row['name'] . "</td>" .
+		"<td class=\"auto-style5\">" . $row['description'] . "</td><td>";
+		
+	if (is_null($row['list_price'])) {
+		echo "Auction only";
+	} else {
+		echo "$" . $row['list_price'];
+	}
+
+	echo "</td><td class=\"auto-style5\">";
+
+	if (is_null($row['auction_price'])) {
+		echo "Buy only";
+	} else if (time() < strtotime($row['bid_end'])) {
+		if ($row['auction_price']>$row['auction_price2']) {
+			echo "$" . $row['auction_price'];
+			}
+		else {
+			echo "$" . $row['auction_price2'];
+			}
+	} else {
+		echo "Auction ended with no winner";
+	}
+
+	echo "</td></tr>";
+
+}
+
 ?>
-
-<p>&nbsp;</p>
-<p class="auto-style4">All Items:</p>
-<p class="auto-style4">&nbsp;</p>
-<table style="width: 100%">
-	<tr>
-		<td class="auto-style6" width="200"><strong>Name</strong></td>
-		<td class="auto-style6"><strong>Description</strong></td>
-		<td class="auto-style6" width="100"><strong>List Price</strong></td>
-		<td class="auto-style6" width="100"><strong>Auction Price</strong></td>
-	</tr>
-	<?php 
-		endAuctions();
-		$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, I.bid_end,  
-		B.auction_price2
-		FROM Items I
-		LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
-		ON B.pid = I.pid
-		LEFT JOIN ItemDesc D
-		ON D.upc = I.upc
-		WHERE I.upc = D.upc 
-		AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()) OR I.list_price > 0)
-		AND I.included_in = 1
-		ORDER BY (D.name)";
-
-		$rs = mysql_query($query);
-
-		while ($row = mysql_fetch_assoc($rs)) {
-			echo "<tr>";
-			echo "<td class=\"auto-style5\"><a href=" . getItemURL($row['pid']) . ">" . 
-				$row['name'] . "</td>" .
-				"<td class=\"auto-style5\">" . $row['description'] . "</td><td>";
-				
-			if (is_null($row['list_price'])) {
-				echo "Auction only";
-			} else {
-				echo "$" . $row['list_price'];
-			}
-
-			echo "</td><td class=\"auto-style5\">";
-
-			if (is_null($row['auction_price'])) {
-				echo "Buy only";
-			} else if (time() < strtotime($row['bid_end'])) {
-				if ($row['auction_price']>$row['auction_price2']) {
-					echo "$" . $row['auction_price'];
-					}
-				else {
-					echo "$" . $row['auction_price2'];
-					}
-			} else {
-				echo "Auction ended with no winner";
-			}
-
-			echo "</td></tr>";
-
-		}
-
-	?>
 </table>
 
 </body>

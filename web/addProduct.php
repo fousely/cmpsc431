@@ -14,11 +14,16 @@ $r = getDBConnection();
 $error = 0;
 $existingUPC = $newUPC = $name = $desc = $location = "";
 $listPrice = $auctionPrice = $reservePrice = $bidStart = $bidEnd ="";
-$existingUPCErr = $newProductErr = $locationErr = "";
+$existingUPCErr = $category = $newProductErr = $locationErr = "";
 $listPriceErr = $auctionPriceErr = $reservePriceErr = $bidStartErr = $bidEnd = "";
 
 // Post Product
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
+
+	$newUPC = test_input($_POST["newUPC"]);
+	$name = test_input($_POST["name"]);
+	$desc = test_input($_POST["desc"]);
+	$category = $_POST["category"];
 
 	if (strcmp($_POST["existingUPC"],"none") == 0 && empty($_POST["newUPC"])) {
 		$existingUPCErr = "You must choose an existing product or create one";
@@ -28,14 +33,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	}
 
 	if (strcmp($_POST["existingUPC"],"none") == 0 && (empty($_POST["newUPC"]) ||
-		empty($_POST["name"]) || empty($_POST["desc"]))) {
+		empty($_POST["name"]) || empty($_POST["desc"]) || 
+		getCategoryValueFromArray($category) == -1)) {
 		$newProductErr = "All new product fields are required";
 		$error = 1;
 	}
-
-	$newUPC = test_input($_POST["newUPC"]);
-	$name = test_input($_POST["name"]);
-	$desc = test_input($_POST["desc"]);
 
 	$location = test_input($_POST["location"]);
 
@@ -94,6 +96,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 				VALUES (\"$upc\", \"$name\", \"$desc\");";
 			$rs = mysql_query($query);
 			$rollback = checkError($rs, $commitMessage);
+
+			$categoryList = getCategoryTreeWalk($category);
+			foreach ($categoryList as $cat) {
+				$query = "INSERT INTO IsIn (upc, category) 
+					VALUES (\"$upc\", \"$cat\");";
+				$rs = mysql_query($query);
+				$rollback = checkError($rs, $commitMessage);
+			}
 		}
 		
 		$query = "INSERT INTO Items (location, upc, list_price, auction_price, reserve_price,
@@ -109,8 +119,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 			
 		if ($rollback == 0) {
 			commitTransaction();
-			$existingUPC = $newUPC = $name = $desc = $location = "";
-			$listPrice = $auctionPrice = $reservePrice = $bidStart = $bidEnd ="";
+			$existingUPC = $newUPC = $name = $desc = $location = $upc = "";
+			$listPrice = $auctionPrice = $reservePrice = $bidStart = $bidEnd = $category ="";
 			array_push($commitMessage, "Item added successfully!");
 		} else {
 			rollbackTransaction();
@@ -190,7 +200,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 		New Product - Name: <input type="text" name="name" value = "';
 	echo $name . '"> <span class="error">*</span><br>
 		New Product - Description: <input type="text" name="desc" value = "';
-	echo $desc . '"> <span class="error">*<br>';
+	echo $desc . '"><span class="error">*</span>';
+	echo "<br>New Product - Category: ";
+	addCategoriesDropdown($category);
+	echo ' <span class="error">*<br>';
 	echo "$newProductErr <br> $existingUPCErr" . '</span><br><br>
 
 		Location:';

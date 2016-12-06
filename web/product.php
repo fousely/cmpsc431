@@ -144,6 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php
 
+endAuctions();
 insertTopOfPage();
 
 if ($pid == False){
@@ -191,16 +192,36 @@ $city = $row['city'];
 $state = $row['state'];
 
 // Show product
+$userRating = getUserRating($owner);
 echo "<br><br>" . '<span class="auto-style7">' .
 	"$itemName </span><br>
 	UPC: $upc <br>
-	Sold by " . userMessageLink($owner) . " from $city, $state <br><br>
-	$description <br><br><br>";
+	Sold by " . userMessageLink($owner) . " from $city, $state <br>";
+
+if ($userRating == -1) {
+	echo "No ratings yet<br>";
+} else {
+	echo "Average rating: " . sprintf('%0.2f', $userRating) . " stars"; 
+}
+
+echo "<br><br>$description <br><br><br>";
 
 if ($includedIn > 1) {
 	// Already sold
+
+	$query = "SELECT T.category FROM Transactions T
+		WHERE T.tid = \"$includedIn\";";
+
+	$row = mysql_fetch_assoc(mysql_query($query));
+
+	if ($row['category'] == "b") {
+		$typeOfSale = "an auction";
+	} else {
+		$typeOfSale = "a purchase";
+	}
+
 	echo '<span class="auto-style7"><span class="error">' . 
-		"Item sold in transaction $includedIn<br><br></span></span>";
+		"Item sold in transaction $includedIn in $typeOfSale<br><br></span></span>";
 }
 
 if ($listPrice > 0) {
@@ -226,9 +247,9 @@ if ($auctionPrice > 0 && (time() < strtotime($bidEnd) || $isOwner)) {
 	$row = mysql_fetch_assoc(mysql_query($query));
 	$bidCount = $row['count'];
 	echo '<span class="auto-style7">Current auction price: $' . 
-		max($maxBid, $auctionPrice) . "<br>
+		max($maxBid, $auctionPrice) . "</span> <a href=\"product.php?pid=$pid\">Refresh</a><br>
 		Number of bids: $bidCount <br>
-		Auction ends at $bidEnd </span><br>";
+		Auction ends at $bidEnd <br>";
 	countdownTimer($bidEnd, "Auction has ended");
 	
 	// Bid form
@@ -256,9 +277,68 @@ if ($auctionPrice > 0 && (time() < strtotime($bidEnd) || $isOwner)) {
 			':</td><td style="align: center">$' . $row['amount'] . "</td></tr>";
 		
 	}
+
+	if ($count == 0) {
+		echo "No bids yet";
+	}
+
 	echo "</table></td></tr></table>";
 	
 }
+
+$itemRating = getItemRating($upc);
+echo "<br><br>" . '<span class="auto-style7">Item Ratings</span><br>';
+if ($itemRating == -1) {
+	echo "No ratings yet<br>";
+} else {
+	echo "Average rating: " . sprintf('%0.2f', $itemRating) . " stars <br><br>";
+
+	$query = 'SELECT * FROM RateItem WHERE upc = "' . $upc .  '" 
+			ORDER BY r_date DESC;';
+	$rs = mysql_query($query);
+
+	echo '<table style="width: 100%">
+		<tr>
+			<td class="auto-style6" width="100"><strong>Date</strong></td>
+			<td class="auto-style6" width="100"><strong>Rater</strong></td>
+			<td class="auto-style6" width="50"><strong>Rating</strong></td>
+			<td class="auto-style6"><strong>Description</strong></td>
+		</tr>';
+
+	while ($row = mysql_fetch_assoc($rs)) {
+		echo '<tr class="auto-style5"><td>' . date("n/j/y", strtotime($row['r_date'])) . "</td><td>";
+		echo userMessageLink($row['rater']) . '</td><td>' . sprintf('%0.2f', $row['stars']) .
+			'</td><td>' . $row['description'] . "</td></tr>";
+	}
+	echo "</table>";
+}
+
+echo "<br><br>" . '<span class="auto-style7">Seller Ratings</span><br>';
+if ($userRating == -1) {
+	echo "No ratings yet<br>";
+} else {
+	echo "Average rating: " . sprintf('%0.2f', $userRating) . " stars <br><br>";
+
+	$query = 'SELECT * FROM Rating WHERE ratee = "' . $owner .  '" 
+			ORDER BY r_date DESC;';
+	$rs = mysql_query($query);
+
+	echo '<table style="width: 100%">
+		<tr>
+			<td class="auto-style6" width="100"><strong>Date</strong></td>
+			<td class="auto-style6" width="100"><strong>Rater</strong></td>
+			<td class="auto-style6" width="50"><strong>Rating</strong></td>
+			<td class="auto-style6"><strong>Description</strong></td>
+		</tr>';
+
+	while ($row = mysql_fetch_assoc($rs)) {
+		echo '<tr class="auto-style5"><td>' . date("n/j/y", strtotime($row['r_date'])) . "</td><td>";
+		echo userMessageLink($row['rater']) . '</td><td>' . sprintf('%0.2f', $row['stars']) .
+			'</td><td>' . $row['description'] . "</td></tr>";
+	}
+	echo "</table>";
+}
+
 
 
 echo '<span class="error">' . "$overallErr </span><br>";
