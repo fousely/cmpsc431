@@ -11,6 +11,7 @@ $aidErr = $emailErr = $full_nameErr = $genderErr = $dobErr = "";
 $streetErr = $cityErr = $zipErr = $phoneNumberErr = $passwordErr = "";
 $aid = $email = $full_name = $gender = $dob = $phoneNumber = $street = $city = $zip = $state = $password = "";
 
+
 // Sign up
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 	// Check aid is unique SELECT count(*) FROM Accounts WHERE aid = aid; = 0
@@ -165,17 +166,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['signup'])) {
 		$rollback = checkError($rs, $commitMessage);
 
 		// Change to only add if NEW address
-		$query = "INSERT INTO Addresses (street, city, state, zip) VALUES (\"$street\", \"$city\",
+		/*$query = "INSERT INTO Addresses (street, city, state, zip) VALUES (\"$street\", \"$city\",
 			 \"$state\", \"$zip\");";
 		$rs = mysql_query($query);
-		$rollback = checkError($rs, $commitMessage);
-		
-		$addressID = mysql_insert_id();
-		$query = "INSERT INTO HasAddress (aid, address_id) VALUES (\"$aid\", \"$addressID\");";
+		$rollback = checkError($rs, $commitMessage);*/
+		$query = "SELECT * FROM Addresses A WHERE A.street = \"$street\"
+			AND A.city = \"$city\" AND A.state = \"$state\" AND A.zip = \"$zip\";";
 		$rs = mysql_query($query);
-		$rollback = checkError($rs, $commitMessage);
+		if(mysql_num_rows($rs) == 0) {
+			$query = "INSERT INTO Addresses (street, city, state, zip) VALUES (\"$street\", \"$city\",
+			 	\"$state\", \"$zip\");";
+			$rs = mysql_query($query);
+			$rollback = checkError($rs, $commitMessage);
 
-
+			$addressID = mysql_insert_id();
+			$query = "INSERT INTO HasAddress (aid, address_id) VALUES (\"$aid\", \"$addressID\");";
+			$rs = mysql_query($query);
+			$rollback = checkError($rs, $commitMessage);
+		}
+		else {
+			$row = mysql_fetch_assoc($rs);
+			$addressID = $row['address_id'];
+			$query = "INSERT INTO HasAddress (aid, address_id) VALUES (\"$aid\", \"$addressID\");";
+			$rs = mysql_query($query);
+			$rollback = checkError($rs, $commitMessage);
+		}
+		
 		$query = "INSERT INTO CreditCards (card_number, name_on_card, expiration, 
 			three_digit_code, bills_to) VALUES (\"$ccNum\", \"$full_name\", \"" .
 			date("Y-m-d", strtotime($ccExp)) . "\", \"$cc3\", \"$addressID\");";
