@@ -435,7 +435,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 		}
 		echo "</table><br><br>";
 
-		echo '<p class="auto-style4">Your Buy History:</p>
+		echo '<p class="auto-style4">Your Purchase History:</p>
 			<table style="width: 100%">
 				<tr>
 					<td class="auto-style6" width="20"><strong>PID</strong></td>
@@ -448,6 +448,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="200"><strong>Ships From</strong></td>
 					<td class="auto-style6" width="100"><strong>Rate Item</strong></td>
 					<td class="auto-style6" width="100"><strong>Rate Seller</strong></td>
+					<td class="auto-style6" width="100"><strong>Status</strong></td>
 				</tr>';
 		$query2 = "SELECT I.pid, I.upc, T.seller, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.buyer = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
 
@@ -480,12 +481,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					$row2['seller'] . '" name="startUserRating">Rate Seller</button></form>';
 			}
 
+			echo "<td>";
+
+			$saleDate = $row2['date_of_sale'];
+			if ($saleDate <= date('Y-m-d', strtotime(' -5 day'))) {
+				echo "Delivered";
+			} else if ($saleDate <= date('Y-m-d', strtotime(' -2 day'))) {
+				echo "Shipped";
+			} else if ($saleDate <= date('Y-m-d', strtotime(' -1 day'))) {
+				echo "Preparing to Ship";
+			} else {
+				echo "Processing";
+			}
+
 			echo "</td></tr>";
 		}
 		echo "</table><br><br>";
 
 
-		echo '<p class="auto-style4">Your Bid History:</p>
+		echo '<p class="auto-style4">Your Bidding History:</p>
 			<table>
 				<tr>
 					<td class="auto-style6" width="50"><strong>PID</strong></td>
@@ -551,6 +565,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="100"><strong>Paid With</strong></td>
 					<td class="auto-style6" width="200"><strong>Ships To</strong></td>
 					<td class="auto-style6" width="200"><strong>Ships From</strong></td>
+					<td class="auto-style6" width="100"><strong>Status</strong></td>
 				</tr>';
 		$query2 = "SELECT I.pid, I.upc, T.buyer, T.category, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.seller = \"" . $_SESSION['aid'] . "\"" . " AND T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
 
@@ -573,7 +588,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 			echo "</td><td>" . $row2['paid_with'] . "</td>" .
 				"<td>" . $row2['street_to'] . "<br>" . $row2['city_to'] . ", " . $row2['state_to'] . " " . $row2['zip_to'] . "</td>" .
 				"<td class=\"auto-style5\">" . $row2['street_from'] . "<br>" . $row2['city_from'] . ", " . $row2['state_from'] . " " . $row2['zip_from'] . "</td>";
-			echo "</tr>";
+
+			echo "<td>";
+
+			$saleDate = $row2['date_of_sale'];
+			if ($saleDate <= date('Y-m-d', strtotime(' -5 day'))) {
+				echo "Delivered";
+			} else if ($saleDate <= date('Y-m-d', strtotime(' -2 day'))) {
+				echo "Shipped";
+			} else if ($saleDate <= date('Y-m-d', strtotime(' -1 day'))) {
+				echo "Preparing to Ship";
+			} else {
+				echo "Processing";
+			}
+
+			echo "</td></tr>";
 		}
 		echo "</table><br><br>";
 	}
