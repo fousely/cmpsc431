@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['post'])) {
 	$newUPC = test_input($_POST["newUPC"]);
 	$name = test_input($_POST["name"]);
 	$desc = test_input($_POST["desc"]);
-	$category = $_POST["category"];
+	$category = urldecode($_POST["category"]);
 
 	if (strcmp($_POST["existingUPC"],"none") == 0 && empty($_POST["newUPC"])) {
 		$existingUPCErr = "You must choose an existing product or create one";

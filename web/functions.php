@@ -292,7 +292,7 @@ function addCategoriesDropdown($selected) {
 	echo '<select name="category">';
 	echo '<option value=-1> Choose category </option>';
 	foreach ($categories as $category => $value) {
-		echo '<option value="' . $category . '"';
+		echo '<option value="' . urlencode($category) . '"';
 		if (!empty($selected) && strcmp($selected, $category) == 0) {
 			echo ' selected="selected"';
 		}

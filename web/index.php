@@ -5,22 +5,23 @@ $r = getDBConnection();
 
 $extraQueryConditions = "";
 $search = getURLParameter('search');
-$cat = getURLParameter('cat');
+$category = getURLParameter('category');
 
 if (!empty($search)) {
 	// Add search terms
-	$extraQueryConditions = "AND (D.name LIKE '%$search%' OR D.description LIKE '%$search%')";
+	$extraQueryConditions = "AND (I.upc LIKE '%$search%' OR D.name LIKE '%$search%' 
+					OR O.owner_id LIKE '%$search%' OR D.description LIKE '%$search%') ";
 	$searchMessage = " matching '$search'";
 }
 
-if (!empty($cat)) {
+if (!empty($category) && $category != -1) {
 	// Add category restraints
-	$categoryConstraints = "";
+	$category = urldecode($category);
 
-	// Loop using the getCategoryTreeWalk function from function.php
+	$categoryConstraints = "AND N.category = \"$category\" ";
 
 	$extraQueryConditions = $extraQueryConditions . $categoryConstraints;
-	$categoryMessage = " in category $lowestCategory";
+	$categoryMessage = " in category $category";
 }
 
 ?>
@@ -296,8 +297,9 @@ if (!empty($_SESSION['name'])) {
 
 
 echo '<p>&nbsp;</p><p><form method="get"><div class="row">';
-echo 'Search: <input type="text" name="search" style="width:85%">
-	<button type="submit">Search</button></div></form></p>';
+echo 'Search: <input type="text" name="search" style="width:75%" value="' . $search . '">';
+addCategoriesDropdown($category);
+echo '<button type="submit">Search</button></div></form></p>';
 
 echo'<p>&nbsp;</p>
 	<p class="auto-style4">' . "All Items$searchMessage$categoryMessage:" . '</p>';
@@ -311,21 +313,23 @@ echo '<table style="width: 100%">
 		</tr>';
 
 endAuctions();
-$query = "SELECT I.pid, D.name, D.description, I.list_price, I.auction_price, I.bid_end,  
+$query = "SELECT DISTINCT(I.pid), D.name, D.description, I.list_price, I.auction_price, I.bid_end,  
 	B.auction_price2
-	FROM IsIn N, Items I
+	FROM Owns O, IsIn N, Items I
 	LEFT JOIN (Select B.pid, Max(B.amount) as auction_price2 From Bid B GROUP BY B.pid) B
 	ON B.pid = I.pid
 	LEFT JOIN ItemDesc D
 	ON D.upc = I.upc
 	WHERE I.upc = D.upc 
 	AND (I.bid_end = 0 OR (I.bid_end > NOW() AND I.bid_start <= NOW()) OR I.list_price > 0)
-	AND I.included_in = 1 AND I.upc = N.upc $extraQueryConditions
+	AND I.included_in = 1 AND I.upc = N.upc AND O.pid = I.pid $extraQueryConditions
 	ORDER BY (D.name)";
 
 $rs = mysql_query($query);
+$count = 0;
 
 while ($row = mysql_fetch_assoc($rs)) {
+	$count = $count + 1;
 	echo "<tr>";
 	echo "<td class=\"auto-style5\"><a href=" . getItemURL($row['pid']) . ">" . 
 		$row['name'] . "</td>" .
@@ -354,6 +358,10 @@ while ($row = mysql_fetch_assoc($rs)) {
 
 	echo "</td></tr>";
 
+}
+
+if ($count == 0) {
+	echo '<tr><td>No such items found</td></tr>';
 }
 
 ?>
