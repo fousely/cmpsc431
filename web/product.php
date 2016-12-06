@@ -233,9 +233,9 @@ if ($includedIn > 1) {
 
 if ($listPrice > 0) {
 	// Product can be bought directly
-	echo '<span class="auto-style7">Buy now price: $' . $listPrice ;
+	echo '<span class="auto-style7">Buy now price: $' . $listPrice . '</span>';
 	if (!empty($_SESSION['aid'])) {
-		echo '</span><form method="post">Ship to: ';
+		echo '<form method="post">Ship to: ';
 		addUserAddressesDropDown($_SESSION['aid'], $location);
 		echo "<br>Buy with: ";
 		addUserCCDropdown($_SESSION['aid'], $creditCard);

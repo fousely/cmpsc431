@@ -125,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['login'])) {
 					<td class="auto-style6" width="150"><strong>Ships To</strong></td>
 					<td class="auto-style6" width="150"><strong>Ships From</strong></td>
 				</tr>';
-		$query2 = "SELECT I.upc, T.seller, T.buyer, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid";
+		$query2 = "SELECT I.upc, T.seller, T.buyer, T.tracking_number, T.date_of_sale, T.paid_with, A1.street street_to, A1.city city_to, A1.state state_to, A1.zip zip_to, A2.street street_from, A2.city city_from, A2.state state_from, A2.zip zip_from FROM Transactions T, Addresses A1, Addresses A2, Items I WHERE T.ships_to = A1.address_id AND T.ships_from = A2.address_id AND I.included_in = T.tid AND T.tid <> 1";
 
 		$rs2 = mysql_query($query2);
 
